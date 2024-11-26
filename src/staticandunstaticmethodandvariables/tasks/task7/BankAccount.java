@@ -4,12 +4,12 @@ public class BankAccount {
     private static String bankName;
     private int accountNumber;
 
-    public static void setBankName(String bankName) {
-        BankAccount.bankName = bankName;
-    }
-
     public BankAccount(int accountNumber) {
         this.accountNumber = accountNumber;
+    }
+
+    public static void setBankName(String bankName) {
+        BankAccount.bankName = bankName;
     }
 
     @Override

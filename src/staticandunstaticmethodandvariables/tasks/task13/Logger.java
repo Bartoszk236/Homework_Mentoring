@@ -7,7 +7,6 @@ public class Logger {
         logCount++;
         System.out.println(message);
     }
-
     public static int getLogCount() {
         return logCount;
     }
