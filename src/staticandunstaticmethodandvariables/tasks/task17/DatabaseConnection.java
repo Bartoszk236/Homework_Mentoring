@@ -6,6 +6,7 @@ public class DatabaseConnection {
     public static void connect() {
         isConnected = true;
     }
+
     public static boolean getIsConnected() {
         return isConnected;
     }

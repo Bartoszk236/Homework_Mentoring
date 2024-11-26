@@ -8,6 +8,7 @@ public class Implementation {
         }
         return max;
     }
+
     public void displayArray(int[] array){
         for (int i = 0; i < array.length; i++) {
             System.out.print(array[i] + " ");

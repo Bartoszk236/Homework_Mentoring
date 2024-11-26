@@ -12,6 +12,7 @@ public class Library {
     public static void incrementTotalBooks() {
         totalBooks++;
     }
+
     public static int getTotalBooks() {
         return totalBooks;
     }
