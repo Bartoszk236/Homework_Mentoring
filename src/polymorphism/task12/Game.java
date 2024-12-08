@@ -1,5 +1,5 @@
 package src.polymorphism.task12;
 
-abstract public class Game {
+public abstract class Game {
     abstract void play();
 }

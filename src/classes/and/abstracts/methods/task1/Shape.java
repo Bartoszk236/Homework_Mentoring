@@ -1,6 +1,6 @@
 package src.classes.and.abstracts.methods.task1;
 
-abstract public class Shape {
+public abstract class Shape {
     private String color;
 
     public Shape(String color) {

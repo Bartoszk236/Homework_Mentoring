@@ -1,6 +1,6 @@
 package src.polymorphism.task11;
 
-abstract public class Employee {
+public abstract class Employee {
     private int workHours;
 
     public Employee(int workHours) {

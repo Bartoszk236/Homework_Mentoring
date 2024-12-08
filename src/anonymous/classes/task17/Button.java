@@ -1,10 +1,6 @@
 package src.anonymous.classes.task17;
 
 public class Button {
-    interface ClickListener {
-        void onClick();
-    }
-
     private ClickListener clickListener;
 
     public void setClickListener(ClickListener clickListener) {
@@ -13,5 +9,9 @@ public class Button {
 
     public void click() {
         clickListener.onClick();
+    }
+
+    interface ClickListener {
+        void onClick();
     }
 }

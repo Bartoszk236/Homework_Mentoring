@@ -1,10 +1,6 @@
 package src.anonymous.classes.task19;
 
 public class Person {
-    private interface Greeting {
-        void sayHello();
-    }
-
     private String name;
 
     public Person(String name) {
@@ -14,5 +10,9 @@ public class Person {
 
     public void sayHello() {
         System.out.println("Hello " + name + "! Your initialization successful");
+    }
+
+    private interface Greeting {
+        void sayHello();
     }
 }

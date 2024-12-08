@@ -1,5 +1,5 @@
 package src.classes.and.abstracts.methods.task2;
 
-abstract public class Appliance {
+public abstract class Appliance {
     abstract void turnOn();
 }
