@@ -8,7 +8,8 @@ public class Main {
         Person person2 = new Person(21, "Bartosz");
 
         HashSet<Person> hashSet = new HashSet<>();
-        hashSet.add(person1); hashSet.add(person2);
+        hashSet.add(person1);
+        hashSet.add(person2);
         // bez dostosowania metod hashCode i equals obydwa obiekty trafiają do hashSet
         System.out.println(hashSet);
     }

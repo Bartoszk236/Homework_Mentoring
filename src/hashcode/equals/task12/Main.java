@@ -8,7 +8,8 @@ public class Main {
         Person person2 = new Person(21, "Bartosz");
 
         HashSet<Person> hashSet = new HashSet<>();
-        hashSet.add(person1); hashSet.add(person2);
+        hashSet.add(person1);
+        hashSet.add(person2);
         // hashcode był ten sam, metoda equals zwróciła true przez co person2 nie został dodany do hashset
         System.out.println(hashSet);
     }

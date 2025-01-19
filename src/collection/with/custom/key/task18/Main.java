@@ -8,7 +8,9 @@ public class Main {
         Employee employee1 = new Employee("Marek");
         Employee employee2 = new Employee("Maciej");
         Employee employee3 = new Employee("Jack");
-        hashMap.put(employee1, "HR"); hashMap.put(employee2, "IT"); hashMap.put(employee3, "Cyber security");
+        hashMap.put(employee1, "HR");
+        hashMap.put(employee2, "IT");
+        hashMap.put(employee3, "Cyber security");
         System.out.println(hashMap);
     }
 }
