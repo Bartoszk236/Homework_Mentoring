@@ -11,11 +11,13 @@ public class Main {
     }
 
     public static List<String> sortAlphabetically(List<String> list) {
-        for (int i = 0; i < list.size(); i++) {
-            for (int j = i + 1; j < list.size(); j++) {
-                if (list.get(i).compareTo(list.get(j)) > 0) {
-                    String temp = list.get(i);
-                    list.set(i, list.get(j));
+        int listSize = list.size();
+        for (int i = 0; i < listSize; i++) {
+            for (int j = i + 1; j < listSize; j++) {
+                String temp = list.get(i);
+                String temp2 = list.get(j);
+                if (temp.compareTo(temp2) > 0) {
+                    list.set(i, temp2);
                     list.set(j, temp);
                 }
             }
