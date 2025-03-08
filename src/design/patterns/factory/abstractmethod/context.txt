@@ -1,0 +1,19 @@
+Scenariusz: System generujący interfejs użytkownika dla różnych platform
+
+Wyobraź sobie, że tworzysz aplikację, która ma działać na wielu systemach operacyjnych
+(np. Windows, macOS, Linux). Każdy system posiada własny zestaw kontrolek GUI (przyciski, pola tekstowe,
+okna dialogowe) o unikalnym wyglądzie i zachowaniu. Twoim zadaniem jest zaprojektowanie systemu,
+który w zależności od uruchomionej platformy generuje spójny zestaw kontrolek, zapewniając odpowiednią
+implementację dla danego systemu operacyjnego.
+
+Wnioski:
+Wzorzec factory abstract rozwiązuje problem implementacji, w której mamy wspólne elementy z danymi
+funkcjonalnościami (element "Button", funkcjonalności "display"), lecz implementacja funkcjonalności danego
+elementu zależy jeszcze od innego czynnika (OSType). W przypadku gdy chcemy dodać nową funkcjonalność, wystarczy
+dopisać metodę w interfejsie elementu, zaimplementować ją w odpowiedni sposób w klasie implementującej ten interfejs
+i to wystarczy, ponieważ nasza fabryka tworzy wybraną instancję naszego czynnika (OsType), gdzie nowa metoda będzie
+już posiadać implementację.
+Rozwiązując ten problem bez użycia wzorca factory abstract, powstał kod przypominający wzorzec factory method.
+W tym przypadku gdy mamy jedną funkcjonalność danego elementu, to jeszcze będzie dobre, lecz w przypadku gdy
+nasz element będzie miał więcej funkcjonalności np. display, click, hide, edit, bez użycia factory abstract,
+zalejemy klasę bazową dużą ilością deklaracji metod abstrakcyjnych.
