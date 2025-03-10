@@ -1,0 +1,13 @@
+Problem:
+Masz nowoczesny interfejs Display, który definiuje metodę displayText(String text),
+wykorzystywany w Twojej aplikacji do prezentacji tekstu na ekranie. Jednocześnie posiadasz starszą klasę
+LegacyPrinter, która udostępnia metodę printText(String text) do drukowania tekstu na konsoli. Nie możesz
+modyfikować klasy LegacyPrinter, ale chcesz ją wykorzystać w systemie, który oczekuje interfejsu Display.
+
+Twoim zadaniem jest stworzenie adaptera, który implementuje interfejs Display i wewnętrznie wykorzystuje
+LegacyPrinter do realizacji metody displayText.
+Wnioski:
+Implementacja wzorca adapter pozwala na używanie niekompatybilnych interfejsów w naszej aplikacji bez zmian
+implementacji starych metod. Mój przykład jest trywialny, lecz sytuacja może wymagać zastosowanie innej sygnatury
+bądź konwersji danych wejściowych. W rozwiązaniu bez wzorca, użyłem klasy anonimowej, ponieważ musimy
+dostosować tylko jedną metodę. W przypadku gdy, wiele metod należy nadpisać, może to wprowadzić nieład w kodzie.
