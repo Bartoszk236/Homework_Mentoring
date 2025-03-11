@@ -1,0 +1,20 @@
+Opis problemu:
+Kontekst:
+Firma generuje okresowe raporty dla różnych działów. Każdy dział potrzebuje raportu dostosowanego do swoich
+specyficznych potrzeb, a struktura oraz sposób przygotowania danych różnią się między raportami.
+
+Wyzwanie:
+Utworzenie raportu wymaga specyficznej logiki, która różni się dla raportu finansowego, sprzedażowego
+i produkcyjnego. Chcesz uniknąć rozbudowanego warunkowego kodu (np. wielu instrukcji if lub switch), który
+wybiera sposób generowania raportu na podstawie typu działu. Rozwiązaniem może być użycie wzorca Factory
+Method, który pozwoli na eleganckie wydzielenie logiki tworzenia poszczególnych raportów do dedykowanych klas.
+
+Wnioski po wykonaniu:
+Factory method służy do utworzenia instancji klasy potomnej na podstawie podanego parametru (np. enum).
+Następnie na wybranej instancji możemy wykonać metodę (o tej samej nazwie dla każdej z klas podrzędnych)
+która posiada implementację przystosowaną dla danej klasy. W przypadku gdy chcemy dodać generowanie raportu
+dla nowego działu, wystarczy:
+1. dodać nową klasę
+2. rozszerzyć ją o klasę Report
+3. dodać opcję w report type
+4. dodać case w klasie Factory

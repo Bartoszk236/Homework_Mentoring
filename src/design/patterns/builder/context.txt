@@ -1,0 +1,5 @@
+Wnioski:
+Implementacja wzorca projektowego builder pozwala na tworzenie nowego obiektu z dowolną ilością parametrów.
+Jeśli klasa ma bardzo dużo pól ilość możliwych kombinacji w parametrów w konstruktorze, robi się ogromna.
+Tworzenie nowego obiektu za pomocą builder także daje możliwość nanoszenia danych w dowolnej kolejności.
+W przypadku standardowego konstruktora mamy narzuconą kolejność parametrów.
