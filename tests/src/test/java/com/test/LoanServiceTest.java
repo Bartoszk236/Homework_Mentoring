@@ -5,8 +5,12 @@ import com.test.entity.Loan;
 import com.test.service.LoanService;
 import com.test.validator.LoanValidator;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.math.BigDecimal;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -17,7 +21,27 @@ public class LoanServiceTest {
     private LoanValidator validator = mock(LoanValidator.class);
     private LoanService loanService = new LoanService(repository, validator);
 
-    Discount validDiscount = new Discount("New user discount", new BigDecimal("0.5"));
+    private static Stream<Arguments> dataForTestingAddDiscountMethod() {
+        return Stream.of(
+                Arguments.of(null,
+                        new Discount("New user discount", new BigDecimal("0.5")),
+                        IllegalArgumentException.class,
+                        "loan is null",
+                        "givenNullLoan"
+                ),
+                Arguments.of(Loan.builder()
+                                .loanAmount(new BigDecimal("50000"))
+                                .interestRate(new BigDecimal("5.5"))
+                                .loanType("Cash credit")
+                                .build(), null,
+                        IllegalArgumentException.class,
+                        "discount is null",
+                        "givenNullDiscount"
+                )
+        );
+    }
+
+    private Discount validDiscount = new Discount("New user discount", new BigDecimal("0.5"));
     Loan validLoan = Loan.builder()
             .loanAmount(new BigDecimal("50000"))
             .interestRate(new BigDecimal("5.5"))
@@ -39,28 +63,15 @@ public class LoanServiceTest {
                 .isEqualTo(givenDiscount);
     }
 
-    @Test
-    void givenNullLoanObjectWhenAddDiscountThenReturnIllegalArgumentException() {
-        //given
-        Loan givenLoan = null;
-        Discount givenDiscount = validDiscount;
-
+    @ParameterizedTest(name = "{4}")
+    @MethodSource("dataForTestingAddDiscountMethod")
+    void givenInvalidDataWhenAddDiscountThenThrowsException(
+            Loan loan, Discount discount, Class<? extends Exception> expectedException,
+            String expectedMessage, String description) {
         //when/then
-        assertThatThrownBy(() -> loanService.addDiscount(givenLoan, givenDiscount))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("loan is null");
-    }
-
-    @Test
-    void givenNullDiscountObjectWhenAddDiscountThenReturnIllegalArgumentException() {
-        //given
-        Loan givenLoan = validLoan;
-        Discount givenDiscount = null;
-
-        //when/then
-        assertThatThrownBy(() -> loanService.addDiscount(givenLoan, givenDiscount))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("discount is null");
+        assertThatThrownBy(() -> loanService.addDiscount(loan, discount))
+                .isInstanceOf(expectedException)
+                .hasMessageContaining(expectedMessage);
     }
 
     @Test
