@@ -21,21 +21,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class ClientServiceTest {
-    private final ClientService clientService;
-    private final ClientValidator mockValidator;
-    private final Repository mockRepository;
-    private final ExcelService mockExcelService;
-    private Client mockClient;
-    private Address mockAddress;
-
-    ClientServiceTest() {
-        this.mockValidator = mock(ClientValidator.class);
-        this.mockRepository = mock(Repository.class);
-        this.mockClient = mock(Client.class);
-        this.mockAddress = mock(Address.class);
-        this.mockExcelService = mock(ExcelService.class);
-        this.clientService = new ClientService(mockValidator, mockRepository, mockExcelService);
-    }
+    private final ClientValidator mockValidator = mock(ClientValidator.class);
+    private final Repository mockRepository = mock(Repository.class);
+    private final ExcelService mockExcelService = mock(ExcelService.class);
+    private final ClientService clientService = new ClientService(mockValidator, mockRepository, mockExcelService);
+    private Client mockClient = mock(Client.class);
+    private Address mockAddress = mock(Address.class);
 
     private static Stream<Arguments> clientsStream() {
         return Stream.of(

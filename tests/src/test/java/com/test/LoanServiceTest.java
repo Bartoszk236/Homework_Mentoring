@@ -13,18 +13,16 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 public class LoanServiceTest {
-    private final Repository repository;
-    private final LoanValidator validator;
-    private final LoanService loanService;
+    private Repository repository = mock(Repository.class);
+    private LoanValidator validator = mock(LoanValidator.class);
+    private LoanService loanService = new LoanService(repository, validator);
 
-    LoanServiceTest() {
-        this.repository = mock(Repository.class);
-        this.validator = mock(LoanValidator.class);
-        this.loanService = new LoanService(repository, validator);
-    }
-
-    Loan validLoan = new Loan(new BigDecimal("5.5"), new BigDecimal("50000"), "Cash credit");
     Discount validDiscount = new Discount("New user discount", new BigDecimal("0.5"));
+    Loan validLoan = Loan.builder()
+            .loanAmount(new BigDecimal("50000"))
+            .interestRate(new BigDecimal("5.5"))
+            .loanType("Cash credit")
+            .build();
 
     @Test
     void givenValidDataWhenAddDiscountThenReturnLoanWithDiscount() {

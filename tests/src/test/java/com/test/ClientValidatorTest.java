@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ClientValidatorTest {
-    private final ClientValidator clientValidator;
+    private final ClientValidator clientValidator = new ClientValidator();
 
     private Client validClient = new Client("Bartosz", "Kocyło",
             LocalDate.of(2003, 5, 24), "kocylo.bartosz@gmail.com",
@@ -19,10 +19,6 @@ public class ClientValidatorTest {
             new Address("Warszawa", "00-200", "Marszałkowska", "10")
 
     );
-
-    ClientValidatorTest() {
-        this.clientValidator = new ClientValidator();
-    }
 
     @Test
     void givenValidClientWhenValidateThenReturnTrue() {

@@ -17,7 +17,8 @@ public class LoanService {
     public Loan addDiscount(Loan loan, Discount discount) {
         if (loan == null) throw new IllegalArgumentException("loan is null");
         if (discount == null) throw new IllegalArgumentException("discount is null");
-        return loan.setDiscount(discount);
+        loan.setDiscount(discount);
+        return loan;
     }
 
     public void editTypeOfLoan(Loan loan, String newType) {

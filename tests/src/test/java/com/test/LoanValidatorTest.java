@@ -6,11 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 public class LoanValidatorTest {
-    private final LoanValidator validator;
-
-    LoanValidatorTest() {
-        this.validator = new LoanValidator();
-    }
+    private final LoanValidator validator = new LoanValidator();
 
     @Test
     void givenValidNewTypeWhenValidNewTypeThenReturnTrue() {

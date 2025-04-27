@@ -30,11 +30,7 @@ public class CalculatorTest {
                 Arguments.of(7.5, 2.5, '/', 3.0)
         );
     }
-    private final Calculator calculator;
-
-    CalculatorTest() {
-        this.calculator = new Calculator();
-    }
+    private final Calculator calculator = new Calculator();
 
     @ParameterizedTest
     @MethodSource("provideValues")
