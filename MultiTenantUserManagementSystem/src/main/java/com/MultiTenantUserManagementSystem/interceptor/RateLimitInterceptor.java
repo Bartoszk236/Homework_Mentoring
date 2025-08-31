@@ -10,6 +10,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.MDC;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -48,7 +49,7 @@ public class RateLimitInterceptor implements HandlerInterceptor, Ordered {
             return true;
         }
         long waitSec = TimeUnit.NANOSECONDS.toSeconds(probe.getNanosToWaitForRefill()) + 1;
-        response.setStatus(429);
+        response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
         response.setHeader(HEADER_RETRY_AFTER, String.valueOf(waitSec));
         return false;
     }

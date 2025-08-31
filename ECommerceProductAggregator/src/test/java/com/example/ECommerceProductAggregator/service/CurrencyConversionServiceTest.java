@@ -18,9 +18,9 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class CurrencyConversionServiceTest {
     @Mock
-    NbpClient nbpClient;
+    private NbpClient nbpClient;
     @InjectMocks
-    CurrencyConversionService service;
+    private CurrencyConversionService service;
 
     @ParameterizedTest(name = "amount={0}, curr={1}, rate={2} => expected={3}")
     @CsvSource(textBlock = """

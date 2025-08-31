@@ -5,6 +5,7 @@ import com.example.ECommerceProductAggregator.client.MediaExpertClient;
 import com.example.ECommerceProductAggregator.client.MediaMarktClient;
 import com.example.ECommerceProductAggregator.dto.ExternalApiResponse;
 import com.example.ECommerceProductAggregator.dto.Product;
+import com.example.ECommerceProductAggregator.dto.ProductOffer;
 import com.example.ECommerceProductAggregator.exception.ProductNotFoundException;
 import com.example.ECommerceProductAggregator.mapper.ProductMapper;
 import org.junit.jupiter.api.Test;
@@ -22,17 +23,17 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class OfferServiceTest {
     @Mock
-    EuroNetClient euroNetClient;
+    private EuroNetClient euroNetClient;
     @Mock
-    MediaExpertClient mediaExpertClient;
+    private MediaExpertClient mediaExpertClient;
     @Mock
-    MediaMarktClient mediaMarktClient;
+    private MediaMarktClient mediaMarktClient;
     @Mock
-    CurrencyConversionService currencyConversionService;
+    private CurrencyConversionService currencyConversionService;
     @Spy
-    ProductMapper mapper = new ProductMapper();
+    private ProductMapper mapper = new ProductMapper();
     @InjectMocks
-    OfferService offerService;
+    private OfferService offerService;
 
     @Test
     void givenEmptySourceWhenFindBestOffersThenReturnProductWithIdSearchingNameDefaultDescriptionAndEmptyOffers() {
@@ -81,21 +82,9 @@ class OfferServiceTest {
         //then
         assertThat(out.offers()).hasSize(3);
 
-        var usd = out.offers()
-                .stream()
-                .filter(o -> o.getShopName().equals("ShopB"))
-                .findFirst()
-                .orElseThrow();
-        var eur = out.offers()
-                .stream()
-                .filter(o -> o.getShopName().equals("ShopC"))
-                .findFirst()
-                .orElseThrow();
-        var pln = out.offers()
-                .stream()
-                .filter(o -> o.getShopName().equals("ShopA"))
-                .findFirst()
-                .orElseThrow();
+        var usd = findOfferByShopName(out, "ShopB");
+        var eur = findOfferByShopName(out, "ShopC");
+        var pln = findOfferByShopName(out, "ShopA");
 
         assertThat(usd.getCurrency()).isEqualTo("PLN");
         assertThat(usd.getPrice()).isEqualByComparingTo("480");
@@ -165,5 +154,13 @@ class OfferServiceTest {
                 shop,
                 List.of()
         );
+    }
+
+    private ProductOffer findOfferByShopName(Product out, String shopName) {
+        return out.offers()
+                .stream()
+                .filter(o -> o.getShopName().equals(shopName))
+                .findFirst()
+                .orElseThrow();
     }
 }

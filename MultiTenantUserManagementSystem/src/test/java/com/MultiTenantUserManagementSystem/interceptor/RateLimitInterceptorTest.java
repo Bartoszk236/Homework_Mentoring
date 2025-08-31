@@ -4,6 +4,7 @@ import com.MultiTenantUserManagementSystem.utils.RateLimitProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -63,7 +64,7 @@ class RateLimitInterceptorTest {
 
         var response2 = new MockHttpServletResponse();
         assertFalse(interceptor.preHandle(request, response2, new Object()));
-        assertThat(response2.getStatus()).isEqualTo(429);
+        assertThat(response2.getStatus()).isEqualTo(HttpStatus.TOO_MANY_REQUESTS.value());
         assertThat(response2.getHeader(HEADER_RETRY_AFTER)).isNotNull();
     }
 
@@ -109,7 +110,7 @@ class RateLimitInterceptorTest {
 
         var response3 = new MockHttpServletResponse();
         assertFalse(interceptor.preHandle(bulkRequest, response3, new Object()));
-        assertThat(response3.getStatus()).isEqualTo(429);
+        assertThat(response3.getStatus()).isEqualTo(HttpStatus.TOO_MANY_REQUESTS.value());
 
         var normalRequest = new MockHttpServletRequest("GET", "/users");
         var response4 = new MockHttpServletResponse();

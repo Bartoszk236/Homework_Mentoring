@@ -9,8 +9,6 @@ import java.util.stream.Collectors;
 
 @Component
 public class ProductMapper {
-
-
     public List<ProductOffer> toProductOffers(List<ExternalApiResponse> responses) {
         return responses.stream()
                 .map(response -> new ProductOffer(
