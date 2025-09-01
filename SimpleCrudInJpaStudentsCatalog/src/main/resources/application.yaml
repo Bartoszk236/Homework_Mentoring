@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: SimpleCrudInJpaStudentsCatalog
+  datasource:
+    driver-class-name: org.h2.Driver
+    name: sa
+    password:
+    url: jdbc:h2:mem:database
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+    show-sql: true
+  h2:
+    console:
+      enabled: true
+logging:
+  level:
+    org.hibernate.sql: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
