@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: OwnDataSourceConfigurationAndConnectionPoolAndMonitoring
+  jpa:
+    properties:
+      hibernate:
+        session:
+          events:
+            log:
+              LOG_QUERIES_SLOWER_THAN_MS: 2000
+    hibernate:
+      ddl-auto: update
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - metrics
+          - hikaricp
+  endpoint:
+    health:
+      show-details: always
+logging:
+  level:
+    org:
+      hibernate:
+        SQL_SHOW: INFO

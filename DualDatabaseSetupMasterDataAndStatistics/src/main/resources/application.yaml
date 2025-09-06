@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: DualDatabaseSetupMasterDataAndStatistics
+  datasource:
+    primary:
+      jdbc-url: jdbc:mysql://localhost:3306/main_db
+      username: root
+      password: P@ssword
+      driver-class-name: com.mysql.cj.jdbc.Driver
+    analytics:
+      jdbc-url: jdbc:postgresql://localhost:5432/analytics_db
+      username: postgres
+      password: P@ssword
+      driver-class-name: org.postgresql.Driver
