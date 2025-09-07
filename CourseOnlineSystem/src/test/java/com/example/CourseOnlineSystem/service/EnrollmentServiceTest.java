@@ -1,192 +1,227 @@
 package com.example.CourseOnlineSystem.service;
 
 import com.example.CourseOnlineSystem.entity.Course;
+import com.example.CourseOnlineSystem.entity.Enrollment;
 import com.example.CourseOnlineSystem.entity.Student;
+import com.example.CourseOnlineSystem.model.EnrollmentStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
+import java.math.BigDecimal;
 import java.util.List;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static com.example.CourseOnlineSystem.model.EnrollmentStatus.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @Import(EnrollmentService.class)
-class EnrollmentServiceTest {
-    private static final String STUDENT_FIRST_NAME = "John";
-    private static final String STUDENT_LAST_NAME = "Doe";
-    private static final String STUDENT_EMAIL = "john@exmple.com";
-    private static final Integer STUDENT_NUMBER = 1;
-    private static final String COURSE_TITLE = "Java";
-    private static final String COURSE_DESCRIPTION = "Java Programming";
-    private static final String COURSE_CODE = "XYZ-123";
-    private static final Integer COURSE_CREDITS = 10;
-
+public class EnrollmentServiceTest {
     @Autowired
     private EnrollmentService service;
     @Autowired
     private TestEntityManager em;
 
     @Test
-    void givenStudentAndCourseInDatabaseWhenEnrollStudentThenStudentIsEnrolled() {
+    void givenStudentAlreadyEnrolledWhenEnrollStudentInCourseThenThrowException() {
         //given
-        Student student = createStudent();
-        Course course = createCourse();
-        em.persist(student);
+        String studentEmail = "student1";
+        String courseCode = "courseCode";
+
+        Student student = new Student()
+                .setEmail(studentEmail);
+
+        Course course = new Course()
+                .setCourseCode(courseCode);
+
+        student.enrollInCourse(course, ACTIVE);
         em.persist(course);
-        em.flush();
-        em.clear();
-
-        //when
-        service.enrollStudent(student.getEmail(), course.getCourseCode());
-        em.flush();
-        em.clear();
-
-        //then
-        Student resultStudent = em.find(Student.class, student.getId());
-        Course resultCourse = em.find(Course.class, course.getId());
-
-        assertThat(resultStudent.getEnrolledCourses().contains(resultCourse));
-        assertThat(resultCourse.getStudents().contains(student));
-
-        checkStudent(resultStudent);
-        checkCourse(resultCourse);
-    }
-
-    @Test
-    void givenNoStudentInDatabaseWhenEnrollStudentThenTrowException() {
-        //given
-        String studentEmail = "xyz";
-        Course course = createCourse();
-        em.persist(course);
-        em.flush();
-        em.clear();
-
-        //when / then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> service.enrollStudent(studentEmail, course.getCourseCode()));
-
-        assertEquals("not found student with email: " + studentEmail, exception.getMessage());
-    }
-
-    @Test
-    void givenNoCourseInDatabaseWhenEnrollStudentThenTrowException() {
-        //given
-        Student student = createStudent();
-        String courseCode = "XYZ-123";
         em.persist(student);
         em.flush();
         em.clear();
 
         //when / then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> service.enrollStudent(student.getEmail(), courseCode));
+                () -> service.enrollStudentInCourse(studentEmail, courseCode)
+        );
 
-        assertEquals("not found course with code: " + courseCode, exception.getMessage());
+        assertEquals("student is already enrolled in course with code: " + courseCode, exception.getMessage());
     }
 
     @Test
-    void givenCourseAndStudentInDatabaseWhenGetStudentCoursesThenReturnListOfStudentCourses() {
+    void givenValidStudentAndCourseWhenEnrollStudentInCourseThenEnrolledInCourse() {
         //given
-        Student student = createStudent();
-        Course course = createCourse();
-        student.enrollInCourse(course);
-        em.persist(student);
+        String studentEmail = "student1";
+        String courseCode = "courseCode";
+
+        Student student = new Student()
+                .setEmail(studentEmail);
+
+        Course course = new Course()
+                .setCourseCode(courseCode);
+
         em.persist(course);
+        em.persist(student);
         em.flush();
         em.clear();
 
         //when
-        List<Course> resultCourses = service.getStudentCourses(student.getEmail());
-
-        //then
-        assertEquals(1, resultCourses.size());
-
-        Course resultCourse = resultCourses.getFirst();
-        checkCourse(resultCourse);
-    }
-
-    @Test
-    void givenStudentWithNoCoursesInDatabaseWhenGetStudentCoursesThenThrowException() {
-        //given
-        Student student = createStudent();
-        em.persist(student);
+        service.enrollStudentInCourse(studentEmail, courseCode);
         em.flush();
         em.clear();
 
-        //when /then
+        //then
+        Student result = em.find(Student.class, student.getId());
+        assertEquals(studentEmail, result.getEmail());
+
+        Enrollment enrollment = result.getEnrollments().stream().findFirst().get();
+        assertEquals(ACTIVE, enrollment.getStatus());
+
+        assertEquals(courseCode, enrollment.getCourse().getCourseCode());
+    }
+
+    @Test
+    void givenNoEnrollmentInDatabaseWhenAssignGradeThenThrowException() {
+        //given
+        Long enrollmentId = 1L;
+        BigDecimal grade = new BigDecimal("5.0");
+
+        //when / then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> service.getStudentCourses(student.getEmail()));
+                () -> service.assignGrade(enrollmentId, grade)
+        );
 
-        assertEquals("student with email: " + student.getEmail() + " don't have any course", exception.getMessage());
+        assertEquals("enrollment with id: " + enrollmentId + " not found", exception.getMessage());
     }
 
     @Test
-    void givenStudentWithCourseInDatabaseWhenIsStudentEnrolledThenReturnTrue() {
+    void givenValidDataInDatabaseWhenAssignGradeThenSaveEnrollmentWithNewData() {
         //given
-        Student student = createStudent();
-        Course course = createCourse();
-        student.enrollInCourse(course);
-        em.persist(student);
+        Enrollment enrollment = new Enrollment()
+                .setStatus(ACTIVE);
+        em.persist(enrollment);
+        em.flush();
+        em.clear();
+
+        BigDecimal grade = new BigDecimal("5.00");
+
+        //when
+        service.assignGrade(enrollment.getId(), grade);
+        em.flush();
+        em.clear();
+
+        //then
+        Enrollment result = em.find(Enrollment.class, enrollment.getId());
+        assertEquals(COMPLETED, result.getStatus());
+        assertEquals(grade, result.getFinalGrade());
+    }
+
+    @Test
+    void givenStudentWithCourseWhenDropStudentFromCourseThenChangeStatusToDropped() {
+        //given
+        String studentEmail = "student1";
+        String courseCode = "courseCode";
+        String courseCode2 = "courseCode2";
+
+        Student student = new Student()
+                .setEmail(studentEmail);
+
+        Course course = new Course()
+                .setCourseCode(courseCode);
+
+        Course course2 = new Course()
+                .setCourseCode(courseCode2);
+
+        student.enrollInCourse(course, ACTIVE);
+        student.enrollInCourse(course2, ACTIVE);
         em.persist(course);
+        em.persist(course2);
+        em.persist(student);
         em.flush();
         em.clear();
 
         //when
-        boolean result = service.isStudentEnrolled(student.getEmail(), course.getCourseCode());
+        service.dropStudentFromCourse(studentEmail, courseCode);
+        em.flush();
+        em.clear();
 
         //then
-        assertTrue(result);
+        Student result = em.find(Student.class, student.getId());
+        assertEquals(studentEmail, result.getEmail());
+
+        Enrollment enrollmentWithCourse = result.getEnrollments()
+                .stream()
+                .filter(e -> e.getCourse().getCourseCode().equals(courseCode))
+                .findFirst().get();
+
+        assertEquals(DROPPED, enrollmentWithCourse.getStatus());
+        assertEquals(courseCode, enrollmentWithCourse.getCourse().getCourseCode());
+
+        Enrollment enrollmentWithCourse2 = result.getEnrollments()
+                .stream()
+                .filter(e -> e.getCourse().getCourseCode().equals(courseCode2))
+                .findFirst().get();
+
+        assertEquals(ACTIVE, enrollmentWithCourse2.getStatus());
+        assertEquals(courseCode2, enrollmentWithCourse2.getCourse().getCourseCode());
     }
 
     @Test
-    void givenStudentWithoutCourseInDatabaseWhenIsStudentEnrolledThenReturnFalse() {
+    void givenStudentWithCompletedCoursesWhenGetStudentTranscriptThenReturnEndedCourses() {
         //given
-        Student student = createStudent();
-        Course course = createCourse();
+        Course course1 = new Course()
+                .setCourseCode("JAVA-101")
+                .setTitle("Java Basics")
+                .setDescription("Intro to Java")
+                .setCredits(5);
+        Course course2 = new Course()
+                .setCourseCode("CPP-201")
+                .setTitle("C++ Fundamentals")
+                .setDescription("Core C++")
+                .setCredits(6);
+        Course course3 = new Course()
+                .setCourseCode("SQL-150")
+                .setTitle("SQL Essentials")
+                .setDescription("Relational DB basics")
+                .setCredits(3);
 
+        em.persist(course1);
+        em.persist(course2);
+        em.persist(course3);
+
+        Student student = new Student()
+                .setFirstName("Bartosz")
+                .setEmail("bartosz@example.com")
+                .setStudentNumber(12345);
         em.persist(student);
-        em.persist(course);
+
+        student.enrollInCourse(course1, EnrollmentStatus.COMPLETED);
+        student.enrollInCourse(course2, EnrollmentStatus.COMPLETED);
+        student.enrollInCourse(course3, EnrollmentStatus.ACTIVE);
+
+        student.getEnrollments().stream()
+                .filter(e -> e.getCourse().equals(course1))
+                .findFirst()
+                .ifPresent(e -> e.setFinalGrade(new BigDecimal("4.50")));
+
+        student.getEnrollments().stream()
+                .filter(e -> e.getCourse().equals(course2))
+                .findFirst()
+                .ifPresent(e -> e.setFinalGrade(new BigDecimal("5.00")));
+
         em.flush();
         em.clear();
 
         //when
-        boolean result = service.isStudentEnrolled(student.getEmail(), course.getCourseCode());
+        List<Enrollment> result = service.getStudentTranscript(student.getEmail());
 
         //then
-        assertFalse(result);
-    }
-
-    private void checkStudent(Student student) {
-        assertEquals(STUDENT_FIRST_NAME, student.getFirstName());
-        assertEquals(STUDENT_LAST_NAME, student.getLastName());
-        assertEquals(STUDENT_EMAIL, student.getEmail());
-        assertEquals(STUDENT_NUMBER, student.getStudentNumber());
-    }
-
-    private void checkCourse(Course course) {
-        assertEquals(COURSE_TITLE, course.getTitle());
-        assertEquals(COURSE_DESCRIPTION, course.getDescription());
-        assertEquals(COURSE_CODE, course.getCourseCode());
-        assertEquals(COURSE_CREDITS, course.getCredits());
-    }
-
-    private Student createStudent() {
-        return new Student()
-                .setFirstName(STUDENT_FIRST_NAME)
-                .setLastName(STUDENT_LAST_NAME)
-                .setEmail(STUDENT_EMAIL)
-                .setStudentNumber(STUDENT_NUMBER);
-    }
-
-    private Course createCourse() {
-        return new Course()
-                .setTitle(COURSE_TITLE)
-                .setDescription(COURSE_DESCRIPTION)
-                .setCourseCode(COURSE_CODE)
-                .setCredits(COURSE_CREDITS);
+        assertEquals(2, result.size());
+        assertTrue(result
+                .stream()
+                .allMatch(e -> e.getStatus().equals(COMPLETED))
+        );
     }
 }

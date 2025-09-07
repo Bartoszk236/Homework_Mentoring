@@ -3,9 +3,7 @@ package com.example.CourseOnlineSystem.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "courses")
@@ -23,16 +21,8 @@ public class Course {
     private Integer credits;
     @Column(name = "course_code", unique = true)
     private String courseCode;
-    @ManyToMany(mappedBy = "enrolledCourses")
-    private Set<Student> students = new HashSet<>();
-
-    void addStudent(Student student) {
-        students.add(student);
-    }
-
-    void removeStudent(Student student) {
-        students.remove(student);
-    }
+    @OneToMany(mappedBy = "course")
+    private Set<Enrollment> enrollments = new HashSet<>();
 
     public Course setCourseCode(String courseCode) {
         this.courseCode = courseCode;

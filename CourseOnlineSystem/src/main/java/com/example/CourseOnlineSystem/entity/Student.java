@@ -1,11 +1,11 @@
 package com.example.CourseOnlineSystem.entity;
 
+import com.example.CourseOnlineSystem.model.EnrollmentStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.*;
 
 @Entity
 @Table(name = "students")
@@ -23,22 +23,20 @@ public class Student {
     private String email;
     @Column(name = "student_number")
     private Integer studentNumber;
-    @ManyToMany
-    @JoinTable(
-            name = "student_enrollments",
-            joinColumns = @JoinColumn(name = "student_id"),
-            inverseJoinColumns = @JoinColumn(name = "course_id")
-    )
-    private Set<Course> enrolledCourses = new HashSet<>();
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Enrollment> enrollments = new HashSet<>();
 
-    public void enrollInCourse(Course course) {
-        this.enrolledCourses.add(course);
-        course.addStudent(this);
+    public void enrollInCourse(Course course, EnrollmentStatus enrollmentStatus) {
+        Enrollment enrollment = new Enrollment(this, course, LocalDate.now(), enrollmentStatus);
+        this.enrollments.add(enrollment);
+        course.getEnrollments().add(enrollment);
     }
 
-    public void unenrollInCourse(Course course) {
-        this.enrolledCourses.remove(course);
-        course.removeStudent(this);
+    public List<Course> getActiveCourses() {
+        return this.enrollments.stream()
+                .filter(enrollment -> enrollment.getStatus().equals(EnrollmentStatus.ACTIVE))
+                .map(Enrollment::getCourse)
+                .toList();
     }
 
     public Student setEmail(String email) {
