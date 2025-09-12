@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="pl">
+<head>
+    <meta charset="utf-8"/>
+    <title>Chat STOMP</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+<body>
+<h2>Chat STOMP</h2>
+
+<div>
+    <input id="sender" placeholder="Nadawca" />
+    <input id="message" placeholder="Wiadomość" disabled />
+    <button id="connectBtn">Połącz</button>
+    <button id="disconnectBtn" disabled>Rozłącz</button>
+    <button id="sendBtn" disabled>Wyślij</button>
+</div>
+
+<ul id="messages"></ul>
+
+<script>
+    let stompClient = null;
+
+    const sender = document.getElementById('sender');
+    const msgInput = document.getElementById('message');
+    const connectBtn = document.getElementById('connectBtn');
+    const disconnectBtn = document.getElementById('disconnectBtn');
+    const sendBtn = document.getElementById('sendBtn');
+    const list = document.getElementById('messages');
+
+    function log(text) {
+        const li = document.createElement('li');
+        li.textContent = text;
+        list.appendChild(li);
+    }
+
+    function connect() {
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.debug = msg => console.log("[STOMP]", msg);
+
+        stompClient.connect({}, () => {
+            log("Połączono przez STOMP");
+            msgInput.disabled = false;
+            sendBtn.disabled = false;
+            connectBtn.disabled = true;
+            disconnectBtn.disabled = false;
+
+            stompClient.subscribe('/topic/public', msg => {
+                const m = JSON.parse(msg.body);
+                log(`ECHO: ${m.sender}: ${m.content} (${m.type})`);
+            });
+        });
+    }
+
+    function disconnect() {
+        if (stompClient) stompClient.disconnect(() => {
+            log("Rozłączono");
+            msgInput.disabled = true;
+            sendBtn.disabled = true;
+            connectBtn.disabled = false;
+            disconnectBtn.disabled = true;
+        });
+    }
+
+    function send() {
+        if (!stompClient) return;
+        const msg = { sender: sender.value || "Anon", content: msgInput.value, type: "CHAT" };
+        log("SEND: " + msg.content);
+        stompClient.send("/app/chat.send", {}, JSON.stringify(msg));
+        msgInput.value = "";
+    }
+
+    connectBtn.onclick = connect;
+    disconnectBtn.onclick = disconnect;
+    sendBtn.onclick = send;
+    msgInput.onkeydown = e => { if (e.key === "Enter") send(); };
+</script>
+</body>
+</html>
