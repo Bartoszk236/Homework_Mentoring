@@ -2,6 +2,7 @@ package com.example.CompleteECommerceSystemIntegrationOfAllTypesOfRelationship.e
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ public class Tag {
     @Column(name = "tag_id")
     private Long id;
 
+    @Setter
     @Column(name = "name")
     private String name;
 
@@ -36,10 +38,5 @@ public class Tag {
 
     public void addProductTag(ProductTag productTag) {
         this.productTags.add(productTag);
-    }
-
-    public Tag setName(String name) {
-        this.name = name;
-        return this;
     }
 }

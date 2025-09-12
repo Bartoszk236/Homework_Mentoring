@@ -90,8 +90,8 @@ public class BlogServiceImplTest {
         Author author = createAuthor();
         em.persist(author);
 
-        BlogPost blogPost = createBlogPost()
-                .setAuthor(author);
+        BlogPost blogPost = createBlogPost();
+        blogPost.setAuthor(author);
         em.persist(blogPost);
 
         em.flush();
@@ -138,8 +138,8 @@ public class BlogServiceImplTest {
 
         Comment comment = createComment();
 
-        BlogPost blogPost = createBlogPost()
-                .setAuthor(author);
+        BlogPost blogPost = createBlogPost();
+        blogPost.setAuthor(author);
 
         blogPost.addComment(comment);
         em.persist(blogPost);
@@ -180,8 +180,8 @@ public class BlogServiceImplTest {
 
         Comment comment = createComment();
 
-        BlogPost blogPost = createBlogPost()
-                .setAuthor(author);
+        BlogPost blogPost = createBlogPost();
+        blogPost.setAuthor(author);
 
         blogPost.addComment(comment);
 
@@ -272,8 +272,8 @@ public class BlogServiceImplTest {
         Author author = createAuthor();
         em.persist(author);
 
-        BlogPost blogPost = createBlogPost()
-                .setAuthor(author);
+        BlogPost blogPost = createBlogPost();
+        blogPost.setAuthor(author);
 
         for (int i = 0; i < countOfComments; i++) {
             blogPost.addComment(createComment());
@@ -293,20 +293,23 @@ public class BlogServiceImplTest {
     }
 
     private Author createAuthor() {
-        return new Author()
-                .setName(AUTHOR_NAME)
-                .setEmail(AUTHOR_EMAIL);
+        Author author = new Author();
+        author.setName(AUTHOR_NAME);
+        author.setEmail(AUTHOR_EMAIL);
+        return author;
     }
 
     private BlogPost createBlogPost() {
-        return new BlogPost()
-                .setTitle(POST_TITLE)
-                .setContent(POST_CONTENT);
+        BlogPost blogPost = new BlogPost();
+        blogPost.setTitle(POST_TITLE);
+        blogPost.setContent(POST_CONTENT);
+        return blogPost;
     }
 
     private Comment createComment() {
-        return new Comment()
-                .setAuthorName(COMMENT_AUTHOR_NAME)
-                .setContent(COMMENT_CONTENT);
+        Comment comment = new Comment();
+        comment.setAuthorName(COMMENT_AUTHOR_NAME);
+        comment.setContent(COMMENT_CONTENT);
+        return comment;
     }
 }

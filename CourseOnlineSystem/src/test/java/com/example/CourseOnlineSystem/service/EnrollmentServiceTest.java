@@ -30,11 +30,11 @@ public class EnrollmentServiceTest {
         String studentEmail = "student1";
         String courseCode = "courseCode";
 
-        Student student = new Student()
-                .setEmail(studentEmail);
+        Student student = new Student();
+        student.setEmail(studentEmail);
 
-        Course course = new Course()
-                .setCourseCode(courseCode);
+        Course course = new Course();
+        course.setCourseCode(courseCode);
 
         student.enrollInCourse(course, ACTIVE);
         em.persist(course);
@@ -56,11 +56,11 @@ public class EnrollmentServiceTest {
         String studentEmail = "student1";
         String courseCode = "courseCode";
 
-        Student student = new Student()
-                .setEmail(studentEmail);
+        Student student = new Student();
+        student.setEmail(studentEmail);
 
-        Course course = new Course()
-                .setCourseCode(courseCode);
+        Course course = new Course();
+        course.setCourseCode(courseCode);
 
         em.persist(course);
         em.persist(student);
@@ -99,8 +99,8 @@ public class EnrollmentServiceTest {
     @Test
     void givenValidDataInDatabaseWhenAssignGradeThenSaveEnrollmentWithNewData() {
         //given
-        Enrollment enrollment = new Enrollment()
-                .setStatus(ACTIVE);
+        Enrollment enrollment = new Enrollment();
+        enrollment.setStatus(ACTIVE);
         em.persist(enrollment);
         em.flush();
         em.clear();
@@ -125,14 +125,14 @@ public class EnrollmentServiceTest {
         String courseCode = "courseCode";
         String courseCode2 = "courseCode2";
 
-        Student student = new Student()
-                .setEmail(studentEmail);
+        Student student = new Student();
+        student.setEmail(studentEmail);
 
-        Course course = new Course()
-                .setCourseCode(courseCode);
+        Course course = new Course();
+        course.setCourseCode(courseCode);
 
-        Course course2 = new Course()
-                .setCourseCode(courseCode2);
+        Course course2 = new Course();
+        course2.setCourseCode(courseCode2);
 
         student.enrollInCourse(course, ACTIVE);
         student.enrollInCourse(course2, ACTIVE);
@@ -171,30 +171,32 @@ public class EnrollmentServiceTest {
     @Test
     void givenStudentWithCompletedCoursesWhenGetStudentTranscriptThenReturnEndedCourses() {
         //given
-        Course course1 = new Course()
-                .setCourseCode("JAVA-101")
-                .setTitle("Java Basics")
-                .setDescription("Intro to Java")
-                .setCredits(5);
-        Course course2 = new Course()
-                .setCourseCode("CPP-201")
-                .setTitle("C++ Fundamentals")
-                .setDescription("Core C++")
-                .setCredits(6);
-        Course course3 = new Course()
-                .setCourseCode("SQL-150")
-                .setTitle("SQL Essentials")
-                .setDescription("Relational DB basics")
-                .setCredits(3);
+        Course course1 = new Course();
+        course1.setCourseCode("JAVA-101");
+        course1.setTitle("Java Basics");
+        course1.setDescription("Intro to Java");
+        course1.setCredits(5);
+
+        Course course2 = new Course();
+        course2.setCourseCode("CPP-201");
+        course2.setTitle("C++ Fundamentals");
+        course2.setDescription("Core C++");
+        course2.setCredits(6);
+
+        Course course3 = new Course();
+        course3.setCourseCode("SQL-150");
+        course3.setTitle("SQL Essentials");
+        course3.setDescription("Relational DB basics");
+        course3.setCredits(3);
 
         em.persist(course1);
         em.persist(course2);
         em.persist(course3);
 
-        Student student = new Student()
-                .setFirstName("Bartosz")
-                .setEmail("bartosz@example.com")
-                .setStudentNumber(12345);
+        Student student = new Student();
+        student.setFirstName("Bartosz");
+        student.setEmail("bartosz@example.com");
+        student.setStudentNumber(12345);
         em.persist(student);
 
         student.enrollInCourse(course1, EnrollmentStatus.COMPLETED);

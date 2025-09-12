@@ -19,44 +19,44 @@ public class EntityInitialization {
 
     @Transactional
     public SeededData seedFull() {
-        Category electronics = new Category()
-                .setName("Electronics");
+        Category electronics = new Category();
+        electronics.setName("Electronics");
         em.persist(electronics);
 
-        Category books = new Category()
-                .setName("Books");
+        Category books = new Category();
+        books.setName("Books");
         em.persist(books);
 
-        Tag tagNew = new Tag()
-                .setName("New");
+        Tag tagNew = new Tag();
+        tagNew.setName("New");
         em.persist(tagNew);
 
-        Tag tagSale = new Tag()
-                .setName("Sale");
+        Tag tagSale = new Tag();
+        tagSale.setName("Sale");
         em.persist(tagSale);
 
-        Product phone = new Product()
-                .setName("Smartphone X")
-                .setSku("PH-001")
-                .setPrice(new BigDecimal("1999.99"))
-                .setStockQuantity(50)
-                .setCategory(electronics);
+        Product phone = new Product();
+        phone.setName("Smartphone X");
+        phone.setSku("PH-001");
+        phone.setPrice(new BigDecimal("1999.99"));
+        phone.setStockQuantity(50);
+        phone.setCategory(electronics);
         em.persist(phone);
 
-        Product laptop = new Product()
-                .setName("Laptop Pro 14")
-                .setSku("LP-014")
-                .setPrice(new BigDecimal("5499.00"))
-                .setStockQuantity(20)
-                .setCategory(electronics);
+        Product laptop = new Product();
+        laptop.setName("Laptop Pro 14");
+        laptop.setSku("LP-014");
+        laptop.setPrice(new BigDecimal("5499.00"));
+        laptop.setStockQuantity(20);
+        laptop.setCategory(electronics);
         em.persist(laptop);
 
-        Product book = new Product()
-                .setName("Clean Architecture")
-                .setSku("BK-777")
-                .setPrice(new BigDecimal("129.90"))
-                .setStockQuantity(200)
-                .setCategory(books);
+        Product book = new Product();
+        book.setName("Clean Architecture");
+        book.setSku("BK-777");
+        book.setPrice(new BigDecimal("129.90"));
+        book.setStockQuantity(200);
+        book.setCategory(books);
         em.persist(book);
 
         phone.addTagToProduct(tagNew, "tester");
@@ -64,8 +64,8 @@ public class EntityInitialization {
         book.addTagToProduct(tagNew, "tester");
         book.addTagToProduct(tagSale, "tester");
 
-        Customer alice = new Customer()
-                .setEmail("alice@example.com");
+        Customer alice = new Customer();
+        alice.setEmail("alice@example.com");
         em.persist(alice);
 
         CustomerProfile aliceProfile = new CustomerProfile();
@@ -74,51 +74,49 @@ public class EntityInitialization {
         alice.setProfile(aliceProfile);
         em.persist(aliceProfile);
 
-        Customer bob = new Customer()
-                .setEmail("bob@example.com");
+        Customer bob = new Customer();
+        bob.setEmail("bob@example.com");
         em.persist(bob);
 
-        CustomerProfile bobProfile = new CustomerProfile()
-                .setFirstName("Bob")
-                .setLastName("Brown");
+        CustomerProfile bobProfile = new CustomerProfile();
+        bobProfile.setFirstName("Bob");
+        bobProfile.setLastName("Brown");
         bob.setProfile(bobProfile);
         em.persist(bobProfile);
 
-        Order order1 = new Order()
-                .setOrderNumber("ORD-1001")
-                .setOrderDate(LocalDateTime.now().minusDays(2))
-                .setStatus(OrderStatus.NEW)
-                .setCustomer(alice);
+        Order order1 = new Order();
+        order1.setOrderNumber("ORD-1001");
+        order1.setOrderDate(LocalDateTime.now().minusDays(2));
+        order1.setStatus(OrderStatus.NEW);
+        order1.setCustomer(alice);
+        order1.setTotalAmount(new BigDecimal("4129.88"));
         em.persist(order1);
 
-        OrderItem oi1 = new OrderItem()
-                .setProduct(phone)
-                .setQuantity(2)
-                .setOrder(order1);
+        OrderItem oi1 = new OrderItem();
+        oi1.setProduct(phone);
+        oi1.setQuantity(2);
+        oi1.setOrder(order1);
         em.persist(oi1);
 
-        OrderItem oi2 = new OrderItem()
-                .setProduct(book)
-                .setQuantity(1)
-                .setOrder(order1);
+        OrderItem oi2 = new OrderItem();
+        oi2.setProduct(book);
+        oi2.setQuantity(1);
+        oi2.setOrder(order1);
         em.persist(oi2);
 
-        order1.recalculateTotal();
-
-        Order order2 = new Order()
-                .setOrderNumber("ORD-1002")
-                .setOrderDate(LocalDateTime.now().minusDays(1))
-                .setStatus(OrderStatus.COMPLETED)
-                .setCustomer(bob);
+        Order order2 = new Order();
+        order2.setOrderNumber("ORD-1002");
+        order2.setOrderDate(LocalDateTime.now().minusDays(1));
+        order2.setStatus(OrderStatus.COMPLETED);
+        order2.setCustomer(bob);
+        order2.setTotalAmount(new BigDecimal("5499.00"));
         em.persist(order2);
 
-        OrderItem oi3 = new OrderItem()
-                .setProduct(laptop)
-                .setQuantity(1);
+        OrderItem oi3 = new OrderItem();
+        oi3.setProduct(laptop);
+        oi3.setQuantity(1);
         oi3.setOrder(order2);
         em.persist(oi3);
-
-        order2.recalculateTotal();
 
         em.flush();
         em.clear();

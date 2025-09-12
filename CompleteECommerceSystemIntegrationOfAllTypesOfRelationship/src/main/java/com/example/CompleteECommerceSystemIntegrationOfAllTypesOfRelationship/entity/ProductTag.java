@@ -43,23 +43,19 @@ public class ProductTag {
         return Objects.hash(product, tag);
     }
 
-    ProductTag setAddedBy(String addedBy) {
+    void setAddedBy(String addedBy) {
         this.addedBy = addedBy;
-        return this;
     }
 
-    ProductTag setAddedDate(LocalDateTime addedDate) {
+    void setAddedDate(LocalDateTime addedDate) {
         this.addedDate = addedDate;
-        return this;
     }
 
-    ProductTag setProduct(Product product) {
+    void setProduct(Product product) {
         this.product = product;
-        return this;
     }
 
-    ProductTag setTag(Tag tag) {
+    void setTag(Tag tag) {
         this.tag = tag;
-        return this;
     }
 }

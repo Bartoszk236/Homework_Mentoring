@@ -20,7 +20,7 @@ public class ProductTaggingService {
     private final ProductTagRepository productTagRepository;
 
     @Transactional
-    public void addTagToProduct(String productSku, String tagName) {
+    public void addTagToProduct(String productSku, String tagName, String addedBy) {
         Tag tag = tagRepository.findByName(tagName).orElseThrow(
                 () -> new RuntimeException("No tag found with name: " + tagName)
         );
@@ -30,9 +30,8 @@ public class ProductTaggingService {
 
         if (productTagRepository.existsByTagIdAndProductId(tag.getId(), product.getId()))
             throw new RuntimeException("Product tag already exists");
-
-        String addedBy = "Bartosz Admin";
         product.addTagToProduct(tag, addedBy);
+        productRepository.save(product);
     }
 
     public List<Product> findProductsByTag(Set<String> tagNames) {

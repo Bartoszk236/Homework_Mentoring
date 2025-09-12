@@ -54,14 +54,15 @@ class UserServiceImplTest {
     @Test
     void shouldDeleteUserWithProfile() {
         //given
-        User testUser = new User()
-                .setEmail("X")
-                .setPassword("Y")
-                .linkUserProfile(
-                        new UserProfile()
-                                .setFirstName("John")
-                                .setLastName("Doe")
-                );
+        UserProfile userProfile = new UserProfile();
+        userProfile.setFirstName("John");
+        userProfile.setLastName("Doe");
+
+        User testUser = new User();
+        testUser.setEmail("X");
+        testUser.setPassword("Y");
+        testUser.linkUserProfile(userProfile);
+
         em.persist(testUser);
         em.flush();
         em.clear();

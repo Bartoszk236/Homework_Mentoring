@@ -2,6 +2,7 @@ package com.example.CompleteECommerceSystemIntegrationOfAllTypesOfRelationship.e
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -16,18 +17,23 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     @Column(name = "name")
     private String name;
 
+    @Setter
     @Column(name = "sku", unique = true)
     private String sku;
 
+    @Setter
     @Column(name = "price", precision = 6, scale = 2)
     private BigDecimal price;
 
+    @Setter
     @Column(name = "stock_quantity")
     private Integer stockQuantity;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
@@ -60,40 +66,14 @@ public class Product {
     }
 
     public void addTagToProduct(Tag tag, String addedBy) {
-        ProductTag productTag = new ProductTag()
-                .setAddedBy(addedBy)
-                .setAddedDate(LocalDateTime.now())
-                .setTag(tag)
-                .setProduct(this);
+        ProductTag productTag = new ProductTag();
+        productTag.setAddedBy(addedBy);
+        productTag.setAddedDate(LocalDateTime.now());
+        productTag.setTag(tag);
+        productTag.setProduct(this);
 
         this.productTags.add(productTag);
         tag.addProductTag(productTag);
-    }
-
-    public Product setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public Product setSku(String sku) {
-        this.sku = sku;
-        return this;
-    }
-
-    public Product setPrice(BigDecimal price) {
-        this.price = price;
-        return this;
-    }
-
-    public Product setStockQuantity(Integer stockQuantity) {
-        if (stockQuantity < 0) throw new IllegalArgumentException("Stock quantity cannot be negative");
-        this.stockQuantity = stockQuantity;
-        return this;
-    }
-
-    public Product setCategory(Category category) {
-        this.category = category;
-        return this;
     }
 
     void addOrderItem(OrderItem orderItem) {

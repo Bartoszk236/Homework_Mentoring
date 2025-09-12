@@ -54,7 +54,6 @@ class OrderServiceTest {
 
         //when
         Order call = orderService.createOrder(testCustomer.getId(), List.of(dto1, dto2));
-        em.flush();
         em.clear();
 
         //then
@@ -95,7 +94,6 @@ class OrderServiceTest {
 
         //when
         orderService.cancelOrder(testOrder.getId());
-        em.flush();
         em.clear();
 
         //then
@@ -125,7 +123,6 @@ class OrderServiceTest {
         //when
         Exception exception = assertThrows(IllegalStateException.class,
                 () -> orderService.cancelOrder(testOrder.getId()));
-        em.flush();
         em.clear();
 
         //then

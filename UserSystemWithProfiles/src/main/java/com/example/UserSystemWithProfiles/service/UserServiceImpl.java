@@ -17,14 +17,14 @@ public class UserServiceImpl implements UserService {
     public void createUserWithProfile(String email, String password, String firstName, String lastName) {
         if (userRepository.existsByEmail(email)) throw new IllegalArgumentException("Email already taken");
 
-        UserProfile userProfile = new UserProfile()
-                .setFirstName(firstName)
-                .setLastName(lastName);
+        UserProfile userProfile = new UserProfile();
+        userProfile.setFirstName(firstName);
+        userProfile.setLastName(lastName);
 
-        User user = new User()
-                .setEmail(email)
-                .setPassword(password)
-                .linkUserProfile(userProfile);
+        User user = new User();
+        user.setEmail(email);
+        user.setPassword(password);
+        user.linkUserProfile(userProfile);
 
         userRepository.save(user);
         log.info("User with email {} has been created", email);

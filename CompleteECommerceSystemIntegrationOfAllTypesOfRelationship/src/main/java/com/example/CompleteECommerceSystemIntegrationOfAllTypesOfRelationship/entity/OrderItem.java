@@ -2,6 +2,7 @@ package com.example.CompleteECommerceSystemIntegrationOfAllTypesOfRelationship.e
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "order_item")
@@ -12,6 +13,7 @@ public class OrderItem {
     @Column(name = "order_item_id")
     private Long id;
 
+    @Setter
     @Column(name = "quantity")
     private Integer quantity;
 
@@ -23,20 +25,13 @@ public class OrderItem {
     @JoinColumn(name = "order_id")
     private Order order;
 
-    public OrderItem setProduct(Product product) {
+    public void setProduct(Product product) {
         this.product = product;
         product.addOrderItem(this);
-        return this;
     }
 
-    public OrderItem setQuantity(Integer quantity) {
-        this.quantity = quantity;
-        return this;
-    }
-
-    public OrderItem setOrder(Order order) {
+    public void setOrder(Order order) {
         this.order = order;
         order.addOrderItems(this);
-        return this;
     }
 }

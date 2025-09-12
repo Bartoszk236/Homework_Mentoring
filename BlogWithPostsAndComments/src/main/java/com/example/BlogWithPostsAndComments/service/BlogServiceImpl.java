@@ -22,9 +22,9 @@ public class BlogServiceImpl implements BlogService {
                 () -> new IllegalArgumentException("Post with id: " + postId + " does not exist")
         );
 
-        Comment comment = new Comment()
-                .setAuthorName(authorName)
-                .setContent(content);
+        Comment comment = new Comment();
+        comment.setAuthorName(authorName);
+        comment.setContent(content);
 
         blogPost.addComment(comment);
 
@@ -37,10 +37,10 @@ public class BlogServiceImpl implements BlogService {
                 () -> new IllegalArgumentException("Author with id: " + authorId + " not found")
         );
 
-        BlogPost blogPost = new BlogPost()
-                .setTitle(title)
-                .setContent(content)
-                .setAuthor(author);
+        BlogPost blogPost = new BlogPost();
+        blogPost.setTitle(title);
+        blogPost.setContent(content);
+        blogPost.setAuthor(author);
 
         return blogPostRepository.save(blogPost);
     }

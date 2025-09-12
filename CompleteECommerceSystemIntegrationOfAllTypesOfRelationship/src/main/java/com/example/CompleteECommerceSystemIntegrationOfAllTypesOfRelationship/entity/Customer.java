@@ -2,6 +2,7 @@ package com.example.CompleteECommerceSystemIntegrationOfAllTypesOfRelationship.e
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ public class Customer {
     @Column(name = "customer_id")
     private Long id;
 
+    @Setter
     @Column(name = "email", unique = true)
     private String email;
 
@@ -38,15 +40,9 @@ public class Customer {
         orders.add(order);
     }
 
-    public Customer setEmail(String email) {
-        this.email = email;
-        return this;
-    }
-
-    public Customer setProfile(CustomerProfile profile) {
+    public void setProfile(CustomerProfile profile) {
         this.profile = profile;
         profile.setCustomer(this);
-        return this;
     }
 
     @Override

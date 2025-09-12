@@ -2,6 +2,7 @@ package com.example.CourseOnlineSystem.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.*;
 
@@ -13,36 +14,25 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "course_id")
     private Integer id;
+
+    @Setter
     @Column(name = "title")
     private String title;
+
+    @Setter
     @Column(name = "description")
     private String description;
+
+    @Setter
     @Column(name = "credits")
     private Integer credits;
+
+    @Setter
     @Column(name = "course_code", unique = true)
     private String courseCode;
+
     @OneToMany(mappedBy = "course")
     private Set<Enrollment> enrollments = new HashSet<>();
-
-    public Course setCourseCode(String courseCode) {
-        this.courseCode = courseCode;
-        return this;
-    }
-
-    public Course setCredits(Integer credits) {
-        this.credits = credits;
-        return this;
-    }
-
-    public Course setDescription(String description) {
-        this.description = description;
-        return this;
-    }
-
-    public Course setTitle(String title) {
-        this.title = title;
-        return this;
-    }
 
     @Override
     public boolean equals(Object o) {

@@ -11,33 +11,26 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
+
+    @Setter
     @Column(name = "email", unique = true)
     private String email;
+
+    @Setter
     @Column(name = "password")
     private String password;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_profile_id")
     private UserProfile userProfile;
 
-    public User linkUserProfile(UserProfile userProfile) {
+    public void linkUserProfile(UserProfile userProfile) {
         this.userProfile = userProfile;
         userProfile.setUser(this);
-        return this;
     }
 
-    public User unlinkUserProfile(UserProfile userProfile) {
+    public void unlinkUserProfile(UserProfile userProfile) {
         this.userProfile = null;
         userProfile.setUser(null);
-        return this;
-    }
-
-    public User setEmail(String email) {
-        this.email = email;
-        return this;
-    }
-
-    public User setPassword(String password) {
-        this.password = password;
-        return this;
     }
 }

@@ -38,13 +38,13 @@ class ProductTaggingServiceTest {
         //given
         Product testProduct = seededData.products().getFirst();
         String productSku = testProduct.getSku();
+        String addedBy = "bartosz";
 
         Tag testTag = seededData.tags().getLast();
         String tagName = testTag.getName();
 
         //when
-        service.addTagToProduct(productSku, tagName);
-        em.flush();
+        service.addTagToProduct(productSku, tagName, addedBy);
         em.clear();
 
         //then
@@ -63,13 +63,14 @@ class ProductTaggingServiceTest {
         //given
         Product testProduct = seededData.products().getFirst();
         String productSku = testProduct.getSku();
+        String addedBy = "bartosz";
 
         Tag testTag = seededData.tags().getFirst();
         String tagName = testTag.getName();
 
         //when / then
         Exception exception = assertThrows(RuntimeException.class,
-                () -> service.addTagToProduct(productSku, tagName));
+                () -> service.addTagToProduct(productSku, tagName, addedBy));
 
         assertEquals("Product tag already exists", exception.getMessage());
     }

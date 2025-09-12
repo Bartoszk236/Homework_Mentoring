@@ -3,6 +3,7 @@ package com.example.CompleteECommerceSystemIntegrationOfAllTypesOfRelationship.e
 import com.example.CompleteECommerceSystemIntegrationOfAllTypesOfRelationship.model.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,16 +19,20 @@ public class Order {
     @Column(name = "order_id")
     private Long id;
 
+    @Setter
     @Column(name = "order_number")
     private String orderNumber;
 
+    @Setter
     @Column(name = "order_date")
     private LocalDateTime orderDate;
 
+    @Setter
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
+    @Setter
     @Column(name = "total_amount", precision = 6, scale = 2)
     private BigDecimal totalAmount;
 
@@ -37,41 +42,26 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
 
-    public void recalculateTotal() {
-        this.totalAmount = items.stream()
-                .map(item -> item.getProduct().getPrice()
-                        .multiply(BigDecimal.valueOf(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    public Order setOrderNumber(String orderNumber) {
-        this.orderNumber = orderNumber;
-        return this;
-    }
-
-    public Order setOrderDate(LocalDateTime orderDate) {
-        this.orderDate = orderDate;
-        return this;
-    }
-
-    public Order setStatus(OrderStatus status) {
-        this.status = status;
-        return this;
-    }
-
-    public Order setCustomer(Customer customer) {
+    public void setCustomer(Customer customer) {
         this.customer = customer;
         customer.addOrder(this);
-        return this;
-    }
-
-    public boolean updateIsPossible() {
-        if (this.status == OrderStatus.SHIPPED)
-            throw new IllegalStateException("you can't update order when order have status shipped");
-        return true;
     }
 
     void addOrderItems(OrderItem item) {
         this.items.add(item);
+    }
+
+    @Override
+    public String toString() {
+        return "XXX" +
+                "Order{" +
+                "customer=" + customer +
+                ", id=" + id +
+                ", orderNumber='" + orderNumber + '\'' +
+                ", orderDate=" + orderDate +
+                ", status=" + status +
+                ", totalAmount=" + totalAmount +
+                ", items=" + items +
+                '}';
     }
 }

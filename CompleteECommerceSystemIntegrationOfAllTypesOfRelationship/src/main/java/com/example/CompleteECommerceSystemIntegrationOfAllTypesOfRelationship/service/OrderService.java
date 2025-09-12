@@ -5,25 +5,25 @@ import com.example.CompleteECommerceSystemIntegrationOfAllTypesOfRelationship.en
 import com.example.CompleteECommerceSystemIntegrationOfAllTypesOfRelationship.entity.Order;
 import com.example.CompleteECommerceSystemIntegrationOfAllTypesOfRelationship.entity.OrderItem;
 import com.example.CompleteECommerceSystemIntegrationOfAllTypesOfRelationship.entity.Product;
-import com.example.CompleteECommerceSystemIntegrationOfAllTypesOfRelationship.model.OrderStatus;
 import com.example.CompleteECommerceSystemIntegrationOfAllTypesOfRelationship.repository.CustomerRepository;
 import com.example.CompleteECommerceSystemIntegrationOfAllTypesOfRelationship.repository.OrderRepository;
 import com.example.CompleteECommerceSystemIntegrationOfAllTypesOfRelationship.repository.ProductRepository;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import static com.example.CompleteECommerceSystemIntegrationOfAllTypesOfRelationship.model.OrderStatus.*;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
-@Slf4j
 public class OrderService {
     private final ProductRepository productRepository;
     private final CustomerRepository customerRepository;
@@ -51,18 +51,25 @@ public class OrderService {
 
                 product.setStockQuantity(product.getStockQuantity() - orderItemQuantity);
 
-                new OrderItem()
-                        .setProduct(product)
-                        .setQuantity(orderItemQuantity)
-                        .setOrder(order);
+                OrderItem orderItem = new OrderItem();
+                orderItem.setProduct(product);
+                orderItem.setQuantity(orderItemQuantity);
+                orderItem.setOrder(order);
             });
 
-            order.setOrderNumber(UUID.randomUUID().toString())
-                    .setOrderDate(LocalDateTime.now())
-                    .setStatus(OrderStatus.NEW)
-                    .setCustomer(customer);
+            order.setOrderNumber(UUID.randomUUID().toString());
+            order.setOrderDate(LocalDateTime.now());
+            order.setStatus(NEW);
+            order.setCustomer(customer);
 
-            order.recalculateTotal();
+            BigDecimal totalValue = order.getItems()
+                    .stream()
+                    .map(item -> item.getProduct().getPrice()
+                            .multiply(BigDecimal.valueOf(item.getQuantity())))
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            order.setTotalAmount(totalValue);
+
             return orderRepository.save(order);
         } catch (OptimisticLockException | ObjectOptimisticLockingFailureException ex) {
             throw new RuntimeException(ex.getMessage(), ex);
@@ -74,14 +81,17 @@ public class OrderService {
                 () -> new IllegalArgumentException("Order with id: " + orderId + " not found")
         );
 
-        if (order.updateIsPossible()) {
+        if (order.getStatus() != SHIPPED) {
             order.getItems().forEach(item -> {
                 Product product = item.getProduct();
                 Integer quantityToIncrease = item.getQuantity();
                 product.setStockQuantity(product.getStockQuantity() + quantityToIncrease);
             });
 
-            order.setStatus(OrderStatus.CANCELLED);
+            order.setStatus(CANCELLED);
+            orderRepository.saveAndFlush(order);
+        } else {
+            throw new IllegalStateException("you can't update order when order have status shipped");
         }
     }
 }
