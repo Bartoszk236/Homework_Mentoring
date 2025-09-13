@@ -29,18 +29,24 @@ class BookRepositoryTest {
         book1.setAuthor("Jan Kochanowski");
         book1.setPrice(new BigDecimal("10.99"));
         book1.setPublishedDate(LocalDate.of(2000, 1, 1));
+        book1.setTitle("Pieśni Jana Kochanowskiego");
+        book1.setGenre("liryka");
         em.persist(book1);
 
         book2 = new Book();
         book2.setAuthor("Jan Brzechwa");
         book2.setPrice(new BigDecimal("13.99"));
         book2.setPublishedDate(LocalDate.of(2001, 2, 2));
+        book2.setTitle("Akademia Pana Kleksa");
+        book2.setGenre("fantastyka");
         em.persist(book2);
 
         book3 = new Book();
         book3.setAuthor("Henryk Sienkiewicz");
         book3.setPrice(new BigDecimal("12.99"));
         book3.setPublishedDate(LocalDate.of(2003, 3, 3));
+        book3.setTitle("Ogniem i Mieczem");
+        book3.setGenre("powieść historyczna");
         em.persist(book3);
 
         em.flush();
@@ -81,6 +87,45 @@ class BookRepositoryTest {
 
         //when
         List<Book> result = repository.findBooksByPublishedDateAfter(afterThan);
+
+        //then
+        assertTrue(result.containsAll(expectedBooks));
+    }
+
+    @Test
+    void test_findBooksByTitleContaining() {
+        //given
+        String pieceOfTitle = "Pana";
+        List<Book> expectedBooks = List.of(book2);
+
+        //when
+        List<Book> result = repository.findBooksByTitleContaining(pieceOfTitle);
+
+        //then
+        assertTrue(result.containsAll(expectedBooks));
+    }
+
+    @Test
+    void test_findBooksByGenreStartingWith() {
+        //given
+        String prefix = "powieść";
+        List<Book> expectedBooks = List.of(book3);
+
+        //when
+        List<Book> result = repository.findBooksByGenreStartingWith(prefix);
+
+        //then
+        assertTrue(result.containsAll(expectedBooks));
+    }
+
+    @Test
+    void test_findBooksByTitleIgnoreCase() {
+        //given
+        String title = "OGNIEM I MIECZEM";
+        List<Book> expectedBooks = List.of(book3);
+
+        //when
+        List<Book> result = repository.findBooksByTitleIgnoreCase(title);
 
         //then
         assertTrue(result.containsAll(expectedBooks));

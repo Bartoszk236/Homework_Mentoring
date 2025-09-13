@@ -15,4 +15,10 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     List<Book> findBooksByPriceLessThan(BigDecimal lessThan);
 
     List<Book> findBooksByPublishedDateAfter(LocalDate pastThan);
+
+    List<Book> findBooksByTitleContaining(String pieceOfTitle);
+
+    List<Book> findBooksByGenreStartingWith(String prefix);
+
+    List<Book> findBooksByTitleIgnoreCase(String title);
 }
