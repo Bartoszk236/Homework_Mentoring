@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @DataJpaTest
 class BookRepositoryTest {
@@ -63,7 +63,7 @@ class BookRepositoryTest {
         List<Book> result = repository.findBooksByAuthorContainsIgnoreCase(authorFirstName);
 
         //then
-        assertTrue(result.containsAll(expectedBooks));
+        assertThat(result).containsExactlyInAnyOrderElementsOf(expectedBooks);
     }
 
     @Test
@@ -76,7 +76,7 @@ class BookRepositoryTest {
         List<Book> result = repository.findBooksByPriceLessThan(lessThan);
 
         //then
-        assertTrue(result.containsAll(expectedBooks));
+        assertThat(result).containsExactlyInAnyOrderElementsOf(expectedBooks);
     }
 
     @Test
@@ -89,7 +89,7 @@ class BookRepositoryTest {
         List<Book> result = repository.findBooksByPublishedDateAfter(afterThan);
 
         //then
-        assertTrue(result.containsAll(expectedBooks));
+        assertThat(result).containsExactlyInAnyOrderElementsOf(expectedBooks);
     }
 
     @Test
@@ -102,7 +102,7 @@ class BookRepositoryTest {
         List<Book> result = repository.findBooksByTitleContaining(pieceOfTitle);
 
         //then
-        assertTrue(result.containsAll(expectedBooks));
+        assertThat(result).containsExactlyInAnyOrderElementsOf(expectedBooks);
     }
 
     @Test
@@ -115,7 +115,7 @@ class BookRepositoryTest {
         List<Book> result = repository.findBooksByGenreStartingWith(prefix);
 
         //then
-        assertTrue(result.containsAll(expectedBooks));
+        assertThat(result).containsExactlyInAnyOrderElementsOf(expectedBooks);
     }
 
     @Test
@@ -128,6 +128,6 @@ class BookRepositoryTest {
         List<Book> result = repository.findBooksByTitleIgnoreCase(title);
 
         //then
-        assertTrue(result.containsAll(expectedBooks));
+        assertThat(result).containsExactlyInAnyOrderElementsOf(expectedBooks);
     }
 }
