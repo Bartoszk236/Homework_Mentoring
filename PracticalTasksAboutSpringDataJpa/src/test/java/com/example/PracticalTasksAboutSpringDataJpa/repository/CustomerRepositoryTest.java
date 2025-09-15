@@ -24,13 +24,7 @@ class CustomerRepositoryTest {
     @Test
     void test_findAllCustomersSummary() {
         //given
-        Customer customer = new Customer();
-        customer.setFirstName("Bartosz");
-        customer.setLastName("X");
-        customer.setEmail("bartoszX@gmail.com");
-        em.persist(customer);
-        em.flush();
-        em.clear();
+        persistCustomerWithAddress();
 
         //when
         List<CustomerSummary> results = repository.findAllCustomersSummary();
@@ -45,19 +39,7 @@ class CustomerRepositoryTest {
     @Test
     void test_findAllCustomersWithAddress() {
         //given
-        Address address = new Address();
-        address.setCity("Warszawa");
-        address.setCountry("Polska");
-
-        Customer customer = new Customer();
-        customer.setFirstName("Bartosz");
-        customer.setLastName("X");
-        customer.setEmail("bartoszX@gmail.com");
-        customer.setAddress(address);
-
-        em.persist(customer);
-        em.flush();
-        em.clear();
+        persistCustomerWithAddress();
 
         //when
         List<CustomerWithAddress> results = repository.findAllCustomersWithAddress();
@@ -76,6 +58,19 @@ class CustomerRepositoryTest {
     @Test
     void test_findAllCustomersWithCity() {
         //given
+        persistCustomerWithAddress();
+
+        //when
+        List<CustomerDto> results = repository.findAllCustomersWithCity();
+
+        //then
+        CustomerDto restulsCustomerDto = results.getFirst();
+        assertEquals("Bartosz X", restulsCustomerDto.getFullName());
+        assertEquals("bartoszX@gmail.com", restulsCustomerDto.getEmail());
+        assertEquals("Warszawa", restulsCustomerDto.getCity());
+    }
+
+    private void persistCustomerWithAddress() {
         Address address = new Address();
         address.setCity("Warszawa");
         address.setCountry("Polska");
@@ -89,14 +84,5 @@ class CustomerRepositoryTest {
         em.persist(customer);
         em.flush();
         em.clear();
-
-        //when
-        List<CustomerDto> results = repository.findAllCustomersWithCity();
-
-        //then
-        CustomerDto restulsCustomerDto = results.getFirst();
-        assertEquals("Bartosz X", restulsCustomerDto.getFullName());
-        assertEquals("bartoszX@gmail.com", restulsCustomerDto.getEmail());
-        assertEquals("Warszawa", restulsCustomerDto.getCity());
     }
 }
