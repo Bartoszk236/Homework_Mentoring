@@ -3,8 +3,8 @@ package com.example.PracticalTasksAboutSpringDataJpa.entity;
 import jakarta.persistence.*;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -20,7 +20,15 @@ public class User {
     @Column(name = "nickname")
     private String nickname;
 
-    @OneToMany(mappedBy = "userId")
+    @Setter
+    @Column(name = "last_login")
+    private LocalDateTime lastLogin;
+
+    @Setter
+    @Column(name = "active")
+    private Boolean active;
+
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.REMOVE)
     private Set<Post> posts = new HashSet<>();
 
     void addPost(Post post) {

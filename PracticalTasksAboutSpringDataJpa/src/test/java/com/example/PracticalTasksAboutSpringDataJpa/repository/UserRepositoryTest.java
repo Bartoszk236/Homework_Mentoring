@@ -9,9 +9,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 class UserRepositoryTest {
@@ -27,14 +29,20 @@ class UserRepositoryTest {
     void setUp() {
         user1 = new User();
         user1.setNickname("User1");
+        user1.setActive(true);
+        user1.setLastLogin(LocalDateTime.now().minusMonths(7));
         em.persist(user1);
 
         user2 = new User();
         user2.setNickname("User2");
+        user2.setActive(true);
+        user2.setLastLogin(LocalDateTime.now().minusYears(2));
         em.persist(user2);
 
         user3 = new User();
         user3.setNickname("User3");
+        user3.setActive(true);
+        user3.setLastLogin(LocalDateTime.now().minusMonths(2));
         em.persist(user3);
 
         Post post1 = new Post();
@@ -87,5 +95,34 @@ class UserRepositoryTest {
 
         //then
         assertThat(result).containsExactlyInAnyOrderElementsOf(expected);
+    }
+
+    @Test
+    void test_deleteUsersByLastLoginBefore() {
+        //given
+        LocalDateTime givenBefore = LocalDateTime.now().minusMonths(6);
+        List<User> expectedResults = List.of(user3);
+
+        //when
+        repository.deleteUsersByLastLoginBefore(givenBefore);
+        em.flush();
+        em.clear();
+
+        //then
+        List<User> result = repository.findAll();
+        assertThat(result).containsExactlyInAnyOrderElementsOf(expectedResults);
+    }
+
+    @Test
+    void test_deactivateInactiveUsers() {
+        //given
+        LocalDateTime givenCutoffDate = LocalDateTime.now().minusYears(1);
+        int expectedDeactivateInactiveUsers = 1;
+
+        //when
+        int results = repository.deactivateInactiveUsers(givenCutoffDate);
+
+        //then
+        assertEquals(expectedDeactivateInactiveUsers, results);
     }
 }
