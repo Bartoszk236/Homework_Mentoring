@@ -1,9 +1,12 @@
 package com.example.PracticalTasksAboutSpringDataJpa.service;
 
 import com.example.PracticalTasksAboutSpringDataJpa.entity.Product;
+import com.example.PracticalTasksAboutSpringDataJpa.model.Category;
 import com.example.PracticalTasksAboutSpringDataJpa.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.query.SortDirection;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -27,5 +30,9 @@ public class ProductService {
             sort = Sort.by(Sort.Direction.ASC, sortBy);
         }
         return productRepository.findAll(sort);
+    }
+
+    public Page<Product> getProductsPagesByCategory(Category category, Pageable pageable) {
+        return productRepository.findByCategory(category, pageable);
     }
 }
