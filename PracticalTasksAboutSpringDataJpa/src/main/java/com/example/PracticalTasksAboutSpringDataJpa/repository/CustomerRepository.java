@@ -23,4 +23,11 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
             from Customer c
             """)
     List<CustomerWithAddress> findAllCustomersWithAddress();
+
+    @Query("""
+            select new com.example.PracticalTasksAboutSpringDataJpa.repository.projections.CustomerDto(
+            c.firstName, c.lastName, c.email, c.address.city)
+            from Customer c
+            """)
+    List<CustomerDto> findAllCustomersWithCity();
 }

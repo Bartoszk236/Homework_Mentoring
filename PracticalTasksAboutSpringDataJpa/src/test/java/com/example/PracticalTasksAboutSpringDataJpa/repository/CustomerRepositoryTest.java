@@ -2,9 +2,9 @@ package com.example.PracticalTasksAboutSpringDataJpa.repository;
 
 import com.example.PracticalTasksAboutSpringDataJpa.entity.Address;
 import com.example.PracticalTasksAboutSpringDataJpa.entity.Customer;
+import com.example.PracticalTasksAboutSpringDataJpa.repository.projections.CustomerDto;
 import com.example.PracticalTasksAboutSpringDataJpa.repository.projections.CustomerSummary;
 import com.example.PracticalTasksAboutSpringDataJpa.repository.projections.CustomerWithAddress;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -71,5 +71,32 @@ class CustomerRepositoryTest {
         CustomerWithAddress.AddressInfo resultsAddress =  resultsCustomerWithAddress.getAddress();
         assertEquals("Warszawa", resultsAddress.getCity());
         assertEquals("Polska", resultsAddress.getCountry());
+    }
+
+    @Test
+    void test_findAllCustomersWithCity() {
+        //given
+        Address address = new Address();
+        address.setCity("Warszawa");
+        address.setCountry("Polska");
+
+        Customer customer = new Customer();
+        customer.setFirstName("Bartosz");
+        customer.setLastName("X");
+        customer.setEmail("bartoszX@gmail.com");
+        customer.setAddress(address);
+
+        em.persist(customer);
+        em.flush();
+        em.clear();
+
+        //when
+        List<CustomerDto> results = repository.findAllCustomersWithCity();
+
+        //then
+        CustomerDto restulsCustomerDto = results.getFirst();
+        assertEquals("Bartosz X", restulsCustomerDto.getFullName());
+        assertEquals("bartoszX@gmail.com", restulsCustomerDto.getEmail());
+        assertEquals("Warszawa", restulsCustomerDto.getCity());
     }
 }
