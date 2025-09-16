@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "customers")
 @Getter
@@ -19,7 +22,7 @@ public class Customer {
 
     @Setter
     @Column(name = "last_name")
-    private  String lastName;
+    private String lastName;
 
     @Setter
     @Column(name = "email")
@@ -29,8 +32,15 @@ public class Customer {
     @JoinColumn(name = "address_id")
     private Address address;
 
+    @OneToMany(mappedBy = "customer")
+    private List<Order> orders = new ArrayList<>();
+
     public void setAddress(Address address) {
         this.address = address;
         address.setCustomer(this);
+    }
+
+    void addOrder(Order order) {
+        this.orders.add(order);
     }
 }
