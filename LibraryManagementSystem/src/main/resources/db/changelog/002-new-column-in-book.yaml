@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1758217185992-1
+      author: bartoszkocylo (generated)
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: digital_copy_available
+                  type: BIT
+            tableName: books

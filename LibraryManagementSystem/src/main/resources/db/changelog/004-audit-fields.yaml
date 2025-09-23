@@ -1,0 +1,154 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1758222062628-1
+      author: bartoszkocylo (generated)
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: created_date
+                  type: date
+            tableName: authors
+  - changeSet:
+      id: 1758222062628-2
+      author: bartoszkocylo (generated)
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: created_date
+                  type: date
+            tableName: books
+  - changeSet:
+      id: 1758222062628-3
+      author: bartoszkocylo (generated)
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: created_date
+                  type: date
+            tableName: borrow_records
+  - changeSet:
+      id: 1758222062628-4
+      author: bartoszkocylo (generated)
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: created_date
+                  type: date
+            tableName: categories
+  - changeSet:
+      id: 1758222062628-5
+      author: bartoszkocylo (generated)
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: created_date
+                  type: date
+            tableName: publishers
+  - changeSet:
+      id: 1758222062628-6
+      author: bartoszkocylo (generated)
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: created_date
+                  type: date
+            tableName: students
+  - changeSet:
+      id: 1758222062628-7
+      author: bartoszkocylo (generated)
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: identify_uuid
+                  type: VARCHAR(255)
+            tableName: authors
+  - changeSet:
+      id: 1758222062628-8
+      author: bartoszkocylo (generated)
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: updated_date
+                  type: date
+            tableName: authors
+  - changeSet:
+      id: 1758222062628-9
+      author: bartoszkocylo (generated)
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: updated_date
+                  type: date
+            tableName: books
+  - changeSet:
+      id: 1758222062628-10
+      author: bartoszkocylo (generated)
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: updated_date
+                  type: date
+            tableName: borrow_records
+  - changeSet:
+      id: 1758222062628-11
+      author: bartoszkocylo (generated)
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: updated_date
+                  type: date
+            tableName: categories
+  - changeSet:
+      id: 1758222062628-12
+      author: bartoszkocylo (generated)
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: updated_date
+                  type: date
+            tableName: publishers
+  - changeSet:
+      id: 1758222062628-13
+      author: bartoszkocylo (generated)
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: updated_date
+                  type: date
+            tableName: students
+  - changeSet:
+      id: 1758222062628-14
+      author: bartoszkocylo (generated)
+      changes:
+        - addUniqueConstraint:
+            columnNames: identify_uuid
+            constraintName: UC_AUTHORSIDENTIFY_UUID_COL
+            tableName: authors
+  - changeSet:
+      id: 1758225721602-15
+      author: bartoszkocylo (generated)
+      changes:
+        - dropColumn:
+            columnName: is_rented
+            tableName: books
+  - changeSet:
+      id: 1758640430755-17
+      author: bartoszkocylo (generated)
+      changes:
+        - addUniqueConstraint:
+            columnNames: name
+            constraintName: UC_CATEGORIESNAME_COL
+            tableName: categories

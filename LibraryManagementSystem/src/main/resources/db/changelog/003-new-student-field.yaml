@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1758221566615-1
+      author: bartoszkocylo (generated)
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+            tableName: students
