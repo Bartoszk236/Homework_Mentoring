@@ -1,0 +1,108 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1758810236966-1
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_course_tags
+                  name: course_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_course_tags
+                  name: tag_id
+                  type: BIGINT
+            tableName: course_tags
+      rollback:
+        - dropTable:
+            tableName: course_tags
+  - changeSet:
+      id: 1758810236966-2
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_tags
+                  name: tag_id
+                  type: BIGINT
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: identify_id
+                  type: VARCHAR(255)
+            tableName: tags
+      rollback:
+        - dropTable:
+            tableName: tags
+  - changeSet:
+      id: 1758810236966-3
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: course_id, tag_id
+            constraintName: uc_3c5b916f103fde7f9caa36766
+            tableName: course_tags
+      rollback:
+        - dropUniqueConstraint:
+            constraintName: uc_3c5b916f103fde7f9caa36766
+            tableName: course_tags
+  - changeSet:
+      id: 1758810236966-4
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: identify_id
+            constraintName: uc_tags_identify
+            tableName: tags
+      rollback:
+        - dropUniqueConstraint:
+            constraintName: uc_tags_identify
+            tableName: tags
+  - changeSet:
+      id: 1758810236966-5
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: course_id
+            baseTableName: course_tags
+            constraintName: fk_coutag_on_course
+            referencedColumnNames: course_id
+            referencedTableName: courses
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: course_tags
+            constraintName: fk_coutag_on_course
+  - changeSet:
+      id: 1758810236966-6
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: tag_id
+            baseTableName: course_tags
+            constraintName: fk_coutag_on_tag
+            referencedColumnNames: tag_id
+            referencedTableName: tags
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: course_tags
+            constraintName: fk_coutag_on_tag

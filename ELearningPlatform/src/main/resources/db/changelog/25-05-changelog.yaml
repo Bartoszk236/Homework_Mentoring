@@ -1,0 +1,221 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1758819411170-1
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: created_at
+                  type: DATETIME
+              - column:
+                  name: updated_at
+                  type: DATETIME
+            tableName: answer
+      rollback:
+        - dropColumn:
+            tableName: answer
+            columns:
+              - column:
+                  name: created_at
+              - column:
+                  name: updated_at
+  - changeSet:
+      id: 1758819411170-2
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: created_at
+                  type: DATETIME
+              - column:
+                  name: updated_at
+                  type: DATETIME
+            tableName: courses
+      rollback:
+        - dropColumn:
+            tableName: courses
+            columns:
+              - column:
+                  name: created_at
+              - column:
+                  name: updated_at
+  - changeSet:
+      id: 1758819411170-3
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: created_at
+                  type: DATETIME
+              - column:
+                  name: updated_at
+                  type: DATETIME
+            tableName: enrollments
+      rollback:
+        - dropColumn:
+            tableName: enrollments
+            columns:
+              - column:
+                  name: created_at
+              - column:
+                  name: updated_at
+  - changeSet:
+      id: 1758819411170-4
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: created_at
+                  type: DATETIME
+              - column:
+                  name: updated_at
+                  type: DATETIME
+            tableName: grades
+      rollback:
+        - dropColumn:
+            tableName: grades
+            columns:
+              - column:
+                  name: created_at
+              - column:
+                  name: updated_at
+  - changeSet:
+      id: 1758819411170-5
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: created_at
+                  type: DATETIME
+              - column:
+                  name: updated_at
+                  type: DATETIME
+            tableName: lessons
+      rollback:
+        - dropColumn:
+            tableName: lessons
+            columns:
+              - column:
+                  name: created_at
+              - column:
+                  name: updated_at
+  - changeSet:
+      id: 1758819411170-6
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: created_at
+                  type: DATETIME
+              - column:
+                  name: updated_at
+                  type: DATETIME
+            tableName: progress
+      rollback:
+        - dropColumn:
+            tableName: progress
+            columns:
+              - column:
+                  name: created_at
+              - column:
+                  name: updated_at
+  - changeSet:
+      id: 1758819411170-7
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: created_at
+                  type: DATETIME
+              - column:
+                  name: updated_at
+                  type: DATETIME
+            tableName: question
+      rollback:
+        - dropColumn:
+            tableName: question
+            columns:
+              - column:
+                  name: created_at
+              - column:
+                  name: updated_at
+  - changeSet:
+      id: 1758819411170-8
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: created_at
+                  type: DATETIME
+              - column:
+                  name: updated_at
+                  type: DATETIME
+            tableName: quizzes
+      rollback:
+        - dropColumn:
+            tableName: quizzes
+            columns:
+              - column:
+                  name: created_at
+              - column:
+                  name: updated_at
+  - changeSet:
+      id: 1758819411170-9
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: created_at
+                  type: DATETIME
+              - column:
+                  name: updated_at
+                  type: DATETIME
+            tableName: students
+      rollback:
+        - dropColumn:
+            tableName: students
+            columns:
+              - column:
+                  name: created_at
+              - column:
+                  name: updated_at
+  - changeSet:
+      id: 1758819411170-10
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: created_at
+                  type: DATETIME
+              - column:
+                  name: updated_at
+                  type: DATETIME
+            tableName: tags
+      rollback:
+        - dropColumn:
+            tableName: tags
+            columns:
+              - column:
+                  name: created_at
+              - column:
+                  name: updated_at

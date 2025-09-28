@@ -1,0 +1,88 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1758826032231-1
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_reviews
+                  name: opinion_id
+                  type: BIGINT
+              - column:
+                  name: text
+                  type: VARCHAR(255)
+              - column:
+                  name: rate
+                  type: INT
+              - column:
+                  name: course_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: identify_id
+                  type: VARCHAR(255)
+              - column:
+                  name: create_at
+                  type: DATETIME
+              - column:
+                  name: update_at
+                  type: DATETIME
+            tableName: reviews
+      rollback:
+        - dropTable:
+            tableName: reviews
+  - changeSet:
+      id: 1758826032231-2
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: category
+                  type: VARCHAR(255)
+              - column:
+                  name: course_level
+                  type: SMALLINT
+            tableName: courses
+      rollback:
+        - dropColumn:
+            columns:
+              - column:
+                  name: course_level
+            tableName: courses
+  - changeSet:
+      id: 1758826032231-4
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: identify_id
+            constraintName: uc_reviews_identify
+            tableName: reviews
+      rollback:
+        - dropUniqueConstraint:
+            constraintName: uc_reviews_identify
+            tableName: reviews
+  - changeSet:
+      id: 1758826032231-5
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: course_id
+            baseTableName: reviews
+            constraintName: FK_REVIEWS_ON_COURSE
+            referencedColumnNames: course_id
+            referencedTableName: courses
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: reviews
+            constraintName: FK_REVIEWS_ON_COURSE

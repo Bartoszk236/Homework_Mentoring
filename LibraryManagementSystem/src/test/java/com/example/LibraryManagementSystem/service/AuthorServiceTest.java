@@ -3,6 +3,7 @@ package com.example.LibraryManagementSystem.service;
 import com.example.LibraryManagementSystem.entity.Author;
 import com.example.LibraryManagementSystem.entity.Book;
 import com.example.LibraryManagementSystem.entity.BorrowRecord;
+import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -21,6 +22,7 @@ class AuthorServiceTest {
     private TestEntityManager em;
     @Autowired
     private AuthorService authorService;
+    private final Faker faker = new Faker();
 
     @Test
     void givenFewAuthorsWithBooksWithBorrowsWhenGetAuthorsByMostBorrowCountsThenReturnPageWithBorrowsCountDescOrder() {
@@ -29,22 +31,11 @@ class AuthorServiceTest {
         Author author2 = new Author();
         Author author3 = new Author();
 
-        Book book1 = new Book();
-        book1.setTitle("Harry Potter");
-        book1.setIsbn("0000000000000");
-        book1.addAuthor(author1);
+        Book book1 = randomBook(author1);
         em.persist(book1);
-
-        Book book2 = new Book();
-        book2.setTitle("War of Aliens");
-        book2.setIsbn("0000000000001");
-        book2.addAuthor(author2);
+        Book book2 = randomBook(author2);
         em.persist(book2);
-
-        Book book3 = new Book();
-        book3.setTitle("Harry Potter2");
-        book3.setIsbn("0000000000002");
-        book3.addAuthor(author3);
+        Book book3 = randomBook(author3);
         em.persist(book3);
 
         BorrowRecord borrowRecord1 = new BorrowRecord();
@@ -74,5 +65,13 @@ class AuthorServiceTest {
         //then
         assertThat(result).hasSize(3);
         assertThat(result.getContent()).containsExactly(author2, author1, author3);
+    }
+
+    private Book randomBook(Author author) {
+        Book book = new Book();
+        book.setTitle(faker.book().title());
+        book.setIsbn(faker.regexify("[0-9]{13}"));
+        book.addAuthor(author);
+        return book;
     }
 }

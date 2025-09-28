@@ -1,0 +1,69 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1758818896695-3
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_course_prerequisites
+                  name: course_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_course_prerequisites
+                  name: prerequisite_id
+                  type: BIGINT
+            tableName: course_prerequisites
+      rollback:
+        - dropTable:
+            tableName: course_prerequisites
+  - changeSet:
+      id: 1758818896695-4
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: course_id, prerequisite_id
+            constraintName: uc_cf9f59bd65e16a4a922078512
+            tableName: course_prerequisites
+      rollback:
+        - dropUniqueConstraint:
+            constraintName: uc_cf9f59bd65e16a4a922078512
+            tableName: course_prerequisites
+  - changeSet:
+      id: 1758818896695-5
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: course_id
+            baseTableName: course_prerequisites
+            constraintName: fk_coupre_on_course
+            referencedColumnNames: course_id
+            referencedTableName: courses
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: course_prerequisites
+            constraintName: fk_coupre_on_course
+  - changeSet:
+      id: 1758818896695-6
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: prerequisite_id
+            baseTableName: course_prerequisites
+            constraintName: fk_coupre_on_prerequisite
+            referencedColumnNames: course_id
+            referencedTableName: courses
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: course_prerequisites
+            constraintName: fk_coupre_on_prerequisite

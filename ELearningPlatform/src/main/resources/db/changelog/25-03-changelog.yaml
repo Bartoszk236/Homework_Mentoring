@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1758810644496-1
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - dropColumn:
+            columnName: duration
+            tableName: question
+      rollback:
+        - addColumn:
+            tableName: question
+            columns:
+              - column:
+                  name: duration
+  - changeSet:
+      id: 1758810644496-2
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: duration
+                  type: DOUBLE
+            tableName: question
+  - changeSet:
+      id: 1758810644496-3
+      author: bartoszkocylo
+      changes:
+        - modifyDataType:
+            columnName: duration
+            newDataType: DECIMAL(5, 2)
+            tableName: question
