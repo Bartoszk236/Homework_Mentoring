@@ -23,12 +23,9 @@ public class ProductService {
     public List<Product> findProducts(String sortBy, SortDirection sortDirection) {
         if (!ALLOWS_FIELDS.contains(sortBy)) throw new IllegalArgumentException();
 
-        Sort sort;
-        if (sortDirection == DESCENDING) {
-            sort = Sort.by(Sort.Direction.DESC, sortBy);
-        } else {
-            sort = Sort.by(Sort.Direction.ASC, sortBy);
-        }
+        Sort sort = sortDirection == DESCENDING ?
+                Sort.by(Sort.Direction.DESC, sortBy) : Sort.by(Sort.Direction.ASC, sortBy);
+
         return productRepository.findAll(sort);
     }
 

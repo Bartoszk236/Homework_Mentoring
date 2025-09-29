@@ -2,6 +2,7 @@ package com.example.PracticalTasksAboutSpringDataJpa.service;
 
 import com.example.PracticalTasksAboutSpringDataJpa.entity.Product;
 import com.example.PracticalTasksAboutSpringDataJpa.model.Category;
+import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,21 +27,16 @@ class ProductServiceTest {
     private ProductService service;
     @Autowired
     private TestEntityManager em;
+    private final Faker faker = new Faker();
 
     @BeforeEach
     void setUp() {
-        persistProduct("Laptop X200", ELECTRONICS, "3499.00", LocalDate.of(2024, 1, 15));
-        persistProduct("Smartphone A1", ELECTRONICS, "1999.99", LocalDate.of(2024, 3, 5));
-        persistProduct("Headphones Pro", ELECTRONICS, "499.50", LocalDate.of(2024, 2, 12));
-
-        persistProduct("Organic Pasta", FOOD, "8.99", LocalDate.of(2024, 5, 1));
-        persistProduct("Dark Chocolate 70%", FOOD, "5.49", LocalDate.of(2024, 5, 10));
-        persistProduct("Arabica Coffee 1kg", FOOD, "49.90", LocalDate.of(2024, 4, 21));
-        persistProduct("Extra Virgin Olive Oil", FOOD, "34.90", LocalDate.of(2024, 6, 11));
-        persistProduct("Jasmine Rice 5kg", FOOD, "39.99", LocalDate.of(2024, 7, 3));
-        persistProduct("Peanut Butter", FOOD, "14.50", LocalDate.of(2024, 4, 8));
-        persistProduct("Green Tea 50 bags", FOOD, "12.20", LocalDate.of(2024, 8, 18));
-
+        for (int i = 0; i < 2; i++) {
+            persistProduct(ELECTRONICS);
+        }
+        for (int i = 0; i < 7; i++) {
+            persistProduct(FOOD);
+        }
         em.flush();
         em.clear();
     }
@@ -72,12 +68,12 @@ class ProductServiceTest {
         );
     }
 
-    private void persistProduct(String name, Category category, String price, LocalDate createdDate) {
-        Product p = new Product();
-        p.setName(name);
-        p.setCategory(category);
-        p.setPrice(new BigDecimal(price));
-        p.setCreatedDate(createdDate);
-        em.persist(p);
+    private void persistProduct(Category category) {
+        Product product = new Product();
+        product.setName(faker.name().fullName());
+        product.setCategory(category);
+        product.setPrice(BigDecimal.valueOf(faker.number().numberBetween(1,100)));
+        product.setCreatedDate(LocalDate.now().minusDays(faker.number().numberBetween(1,100)));
+        em.persist(product);
     }
 }

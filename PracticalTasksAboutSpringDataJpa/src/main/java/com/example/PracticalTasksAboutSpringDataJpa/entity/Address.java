@@ -1,6 +1,7 @@
 package com.example.PracticalTasksAboutSpringDataJpa.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,9 +31,6 @@ public class Address {
     private String country;
 
     @OneToOne(mappedBy = "address")
+    @Setter(AccessLevel.MODULE)
     private Customer customer;
-
-    void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
 }

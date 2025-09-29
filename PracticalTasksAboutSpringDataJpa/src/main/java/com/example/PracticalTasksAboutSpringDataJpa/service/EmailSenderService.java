@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class NotificationService {
+public class EmailSenderService {
     private final MailLogRepository mailLogRepository;
 
     public void sentEmail(String to) {

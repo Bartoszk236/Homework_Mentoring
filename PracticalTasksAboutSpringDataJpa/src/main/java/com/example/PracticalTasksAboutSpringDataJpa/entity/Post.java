@@ -1,6 +1,7 @@
 package com.example.PracticalTasksAboutSpringDataJpa.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
@@ -8,6 +9,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "posts")
+@Getter
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

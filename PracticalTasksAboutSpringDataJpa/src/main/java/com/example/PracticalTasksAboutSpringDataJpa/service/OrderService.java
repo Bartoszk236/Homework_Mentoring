@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final AuditService auditService;
-    private final NotificationService notificationService;
+    private final EmailSenderService emailSenderService;
     private final CustomerRepository customerRepository;
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -32,7 +32,7 @@ public class OrderService {
 
         orderRepository.save(order);
         auditService.createAuditLog(order, "Created Order");
-        notificationService.sentEmail(customer.getEmail());
+        emailSenderService.sentEmail(customer.getEmail());
         return order;
     }
 
@@ -49,7 +49,7 @@ public class OrderService {
 
         orderRepository.save(order);
         auditService.createAuditLog(order, "Created Order");
-        notificationService.sentEmailSecondVersion(customer.getEmail());
+        emailSenderService.sentEmailSecondVersion(customer.getEmail());
 
         if (executionTime.isBefore(LocalDateTime.now()))
             throw new IllegalArgumentException("Execution time must be before execution time");

@@ -1,9 +1,6 @@
 package com.example.PracticalTasksAboutSpringDataJpa.repository.projections;
 
-public interface CustomerWithAddress {
-    String getFirstName();
-    String getLastName();
-    String getEmail();
+public interface CustomerWithAddress extends CustomerSummary {
     AddressInfo getAddress();
 
     interface AddressInfo {

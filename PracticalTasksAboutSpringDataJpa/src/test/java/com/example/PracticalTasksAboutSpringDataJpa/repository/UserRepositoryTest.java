@@ -2,6 +2,7 @@ package com.example.PracticalTasksAboutSpringDataJpa.repository;
 
 import com.example.PracticalTasksAboutSpringDataJpa.entity.Post;
 import com.example.PracticalTasksAboutSpringDataJpa.entity.User;
+import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,50 +24,14 @@ class UserRepositoryTest {
     private UserRepository repository;
     @Autowired
     private TestEntityManager em;
-    private User user1;
-    private User user2;
-    private User user3;
+    private final Faker faker = new Faker();
 
     @BeforeEach
     void setUp() {
-        user1 = new User();
-        user1.setNickname("User1");
-        user1.setActive(true);
-        user1.setLastLogin(LocalDateTime.now().minusMonths(7));
-        em.persist(user1);
-
-        user2 = new User();
-        user2.setNickname("User2");
-        user2.setActive(true);
-        user2.setLastLogin(LocalDateTime.now().minusYears(2));
-        em.persist(user2);
-
-        user3 = new User();
-        user3.setNickname("User3");
-        user3.setActive(true);
-        user3.setLastLogin(LocalDateTime.now().minusMonths(2));
-        em.persist(user3);
-
-        Post post1 = new Post();
-        post1.setTitle("Financial");
-        post1.setContent("Post1 content");
-        post1.setCreatedDate(LocalDate.of(2020, 1, 1));
-        post1.setUser(user1);
-        em.persist(post1);
-
-        Post post2 = new Post();
-        post2.setTitle("History");
-        post2.setContent("Post2 content");
-        post2.setCreatedDate(LocalDate.of(2022, 1, 1));
-        post2.setUser(user2);
-        em.persist(post2);
-
-        Post post3 = new Post();
-        post3.setTitle("Financial");
-        post3.setContent("Post3 content");
-        post3.setCreatedDate(LocalDate.of(2021, 1, 1));
-        post3.setUser(user3);
-        em.persist(post3);
+        for (int i = 0; i < 10; i++) {
+            em.persist(randomUser());
+            em.persist(randomPost());
+        }
 
         em.flush();
         em.clear();
@@ -73,35 +40,49 @@ class UserRepositoryTest {
     @Test
     void test_findByPostsTitle() {
         //given
-        String givenPostTitle = "Financial";
-        List<User> expected = List.of(user1, user3);
+        String givenPostTitle = faker.regexify("[a-zA-Z]{15}");
+        Post post = randomPost(post1 ->  post1.setTitle(givenPostTitle));
+        em.persist(post);
+        em.flush();
+        em.clear();
 
         //when
         List<User> result = repository.findByPostsTitle(givenPostTitle);
 
         //then
-        assertThat(result).containsExactlyInAnyOrderElementsOf(expected);
+        result.stream()
+                .map(User::getPosts)
+                .flatMap(Collection::stream)
+                .map(Post::getTitle)
+                .forEach(title -> assertThat(title).isEqualTo(givenPostTitle));
     }
 
     @Test
     void test_findByPostsCreatedDateBetween() {
         //given
-        LocalDate givenStartDate = LocalDate.of(2020, 6, 6);
-        LocalDate givenEndDate = LocalDate.of(2022, 6, 6);
-        List<User> expected = List.of(user2, user3);
+        LocalDate givenStartDate = LocalDate.now().minusMonths(3);
+        LocalDate givenEndDate = LocalDate.now().minusMonths(1);
+
+        Post post = randomPost(post1 ->  post1.setCreatedDate(LocalDate.now().minusMonths(2)));
+        em.persist(post);
+        em.flush();
+        em.clear();
 
         //when
         List<User> result = repository.findByPostsCreatedDateBetween(givenStartDate, givenEndDate);
 
         //then
-        assertThat(result).containsExactlyInAnyOrderElementsOf(expected);
+        result.stream()
+                .map(User::getPosts)
+                .flatMap(Collection::stream)
+                .map(Post::getCreatedDate)
+                .forEach(dateCreated -> assertThat(dateCreated).isBetween(givenStartDate, givenEndDate));
     }
 
     @Test
     void test_deleteUsersByLastLoginBefore() {
         //given
         LocalDateTime givenBefore = LocalDateTime.now().minusMonths(6);
-        List<User> expectedResults = List.of(user3);
 
         //when
         repository.deleteUsersByLastLoginBefore(givenBefore);
@@ -110,19 +91,53 @@ class UserRepositoryTest {
 
         //then
         List<User> result = repository.findAll();
-        assertThat(result).containsExactlyInAnyOrderElementsOf(expectedResults);
+        result.stream()
+                .map(User::getLastLogin)
+                .forEach(lastLogin -> assertThat(lastLogin).isAfter(givenBefore));
     }
 
     @Test
     void test_deactivateInactiveUsers() {
         //given
-        LocalDateTime givenCutoffDate = LocalDateTime.now().minusYears(1);
-        int expectedDeactivateInactiveUsers = 1;
+        LocalDateTime givenCutoffDate = LocalDateTime.now().minusMonths(1);
 
         //when
         int results = repository.deactivateInactiveUsers(givenCutoffDate);
 
         //then
-        assertEquals(expectedDeactivateInactiveUsers, results);
+        List<User> result = repository.findAll();
+        result.stream()
+                .filter(user ->  user.getLastLogin().isBefore(givenCutoffDate))
+                .forEach(user -> assertEquals(false, user.getActive()));
+    }
+
+    private User randomUser() {
+        User user = new User();
+        user.setNickname(faker.name().username());
+        int random = faker.number().numberBetween(0, 1);
+        user.setActive(random != 0);
+        int random2 = faker.number().numberBetween(1, 11);
+        user.setLastLogin(LocalDateTime.now().minusMonths(random2));
+        return user;
+    }
+
+    private Post randomPost() {
+        Post post = new Post();
+        post.setTitle(faker.book().title());
+        post.setContent(faker.regexify("[a-zA-Z]{50}"));
+        int random =  faker.number().numberBetween(1, 11);
+        post.setCreatedDate(LocalDate.now().minusMonths(random).minusDays(random));
+
+        User user = randomUser();
+        em.persist(user);
+        post.setUser(user);
+
+        return post;
+    }
+
+    private Post randomPost(Consumer<Post> customizer) {
+        Post post = randomPost();
+        customizer.accept(post);
+        return post;
     }
 }

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Import({
         OrderService.class,
         AuditService.class,
-        NotificationService.class
+        EmailSenderService.class
 })
 class OrderServiceFirstVersionTest {
     @Autowired

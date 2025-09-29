@@ -1,10 +1,12 @@
 package com.example.PracticalTasksAboutSpringDataJpa.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Table(name = "mail_logs")
+@Getter
 public class MailLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
