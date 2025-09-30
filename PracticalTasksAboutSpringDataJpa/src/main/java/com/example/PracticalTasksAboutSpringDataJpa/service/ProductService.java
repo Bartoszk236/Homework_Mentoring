@@ -1,0 +1,35 @@
+package com.example.PracticalTasksAboutSpringDataJpa.service;
+
+import com.example.PracticalTasksAboutSpringDataJpa.entity.Product;
+import com.example.PracticalTasksAboutSpringDataJpa.model.Category;
+import com.example.PracticalTasksAboutSpringDataJpa.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
+import org.hibernate.query.SortDirection;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+import static org.hibernate.query.SortDirection.*;
+
+@Service
+@RequiredArgsConstructor
+public class ProductService {
+    private static final List<String> ALLOWS_FIELDS = List.of("name", "category", "price", "createdDate");
+    private final ProductRepository productRepository;
+
+    public List<Product> findProducts(String sortBy, SortDirection sortDirection) {
+        if (!ALLOWS_FIELDS.contains(sortBy)) throw new IllegalArgumentException();
+
+        Sort sort = sortDirection == DESCENDING ?
+                Sort.by(Sort.Direction.DESC, sortBy) : Sort.by(Sort.Direction.ASC, sortBy);
+
+        return productRepository.findAll(sort);
+    }
+
+    public Page<Product> getProductsPagesByCategory(Category category, Pageable pageable) {
+        return productRepository.findByCategory(category, pageable);
+    }
+}
