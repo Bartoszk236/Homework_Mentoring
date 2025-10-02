@@ -2,6 +2,7 @@ package com.example.LibraryManagementSystem.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PastOrPresent;
+import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -12,6 +13,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "borrow_records")
+@Getter
 public class BorrowRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +39,7 @@ public class BorrowRecord {
     private Student student;
 
     @Column(name = "identify_uuid", updatable = false, unique = true)
-    private String identifyUUID;
+    private String identifyUUID = UUID.randomUUID().toString();
 
     @Column(name = "created_date")
     @CreatedDate
@@ -46,10 +48,6 @@ public class BorrowRecord {
     @Column(name = "updated_date")
     @LastModifiedDate
     private LocalDate updatedDate;
-
-    public BorrowRecord() {
-        this.identifyUUID = UUID.randomUUID().toString();
-    }
 
     public void setBook(Book book) {
         this.book = book;

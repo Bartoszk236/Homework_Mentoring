@@ -67,7 +67,7 @@ public class Book {
     private Publisher publisher;
 
     @Column(name = "identify_uuid", updatable = false, unique = true)
-    private String identifyUUID;
+    private String identifyUUID = UUID.randomUUID().toString();
 
     @Column(name = "created_date")
     @CreatedDate
@@ -76,10 +76,6 @@ public class Book {
     @Column(name = "updated_date")
     @LastModifiedDate
     private LocalDate updatedDate;
-
-    public Book() {
-        this.identifyUUID = UUID.randomUUID().toString();
-    }
 
     public void addAuthor(Author author) {
         authors.add(author);

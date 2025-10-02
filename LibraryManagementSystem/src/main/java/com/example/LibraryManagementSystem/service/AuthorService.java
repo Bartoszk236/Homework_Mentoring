@@ -25,7 +25,7 @@ public class AuthorService {
                 Expression<Long> borrowCount = cb.count(joinBorrowRecord);
 
                 query.groupBy(root);
-                query.orderBy(cb.desc(borrowCount));
+                query.orderBy(cb.desc(borrowCount), cb.desc(root.get("id")));
             }
             return cb.conjunction();
         };

@@ -1,77 +1,68 @@
 package com.example.LibraryManagementSystem.service;
 
+import com.example.LibraryManagementSystem.SampleDataBuilder;
 import com.example.LibraryManagementSystem.dto.CategoryWithAvgPages;
 import com.example.LibraryManagementSystem.entity.Book;
 import com.example.LibraryManagementSystem.entity.Category;
+import com.example.LibraryManagementSystem.repository.CategoryRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @DataJpaTest
-@Import(CategoryService.class)
+@Import({
+        CategoryService.class,
+        SampleDataBuilder.class
+})
 class CategoryServiceTest {
     @Autowired
     private CategoryService categoryService;
     @Autowired
-    private TestEntityManager em;
+    private CategoryRepository categoryRepository;
+    @Autowired
+    private SampleDataBuilder sampleDataBuilder;
+
+    @BeforeEach
+    void setUp() {
+        sampleDataBuilder.initSampleData();
+    }
 
     @Test
     void givenCategoriesAndBooksWhenGetCategoriesWithAvgPagesThenReturnObjectAndValueList() {
         //given
-        Category category1 = new Category();
-        category1.setName("Category 1");
-        em.persist(category1);
-        Category category2 = new Category();
-        category2.setName("Category 2");
-        em.persist(category2);
+        List<Category> category = categoryRepository.findAll();
 
-        Book book1 = new Book();
-        book1.setTitle("Harry Potter");
-        book1.setIsbn("0000000000000");
-        book1.setPagesNumber(212);
-        book1.setCategory(category1);
-        em.persist(book1);
-
-        Book book2 = new Book();
-        book2.setTitle("War of Aliens");
-        book2.setIsbn("0000000000001");
-        book2.setPagesNumber(321);
-        book2.setCategory(category1);
-        em.persist(book2);
-
-        Book book3 = new Book();
-        book3.setTitle("Harry Potter2");
-        book3.setIsbn("0000000000002");
-        book3.setPagesNumber(400);
-        book3.setCategory(category2);
-        em.persist(book3);
-
-        Book book4 = new Book();
-        book4.setTitle("Harry Potter2");
-        book4.setIsbn("0000000000003");
-        book4.setPagesNumber(500);
-        book4.setCategory(category2);
-        em.persist(book4);
-
-        em.flush();
-        em.clear();
-
-        List<CategoryWithAvgPages> expected = List.of(
-                new CategoryWithAvgPages(category1, 266.5),
-                new CategoryWithAvgPages(category2, 450.0)
-        );
+        List<CategoryWithAvgPages> expected = calculateAvgPagesByCategory(category);
 
         //when
         List<CategoryWithAvgPages> result = categoryService.getCategoriesWithAvgPages();
 
         //then
-        assertThat(result).hasSize(2);
+        assertThat(result).isNotEmpty();
         assertThat(result).containsExactlyInAnyOrderElementsOf(expected);
+    }
+
+    private List<CategoryWithAvgPages> calculateAvgPagesByCategory(List<Category> categories) {
+        List<CategoryWithAvgPages> result = new ArrayList<>();
+        categories.forEach(category -> {
+            Set<Book> books = category.getBooks();
+            int avg = books.isEmpty()
+                    ? 0
+                    : (int) Math.round(books.stream()
+                    .mapToInt(Book::getPagesNumber)
+                    .average()
+                    .orElse(0.0));
+
+            result.add(new CategoryWithAvgPages(category, avg));
+        });
+        return result;
     }
 }

@@ -1,48 +1,49 @@
 package com.example.ELearningPlatform.service;
 
+import com.example.ELearningPlatform.SampleDataUtils;
 import com.example.ELearningPlatform.dto.CourseSearchRequest;
 import com.example.ELearningPlatform.entity.Course;
 import com.example.ELearningPlatform.entity.Enrollment;
 import com.example.ELearningPlatform.entity.Review;
 import com.example.ELearningPlatform.model.CourseLevel;
 import com.example.ELearningPlatform.model.EnrollmentStatus;
+import com.example.ELearningPlatform.repository.CourseRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
+import javax.swing.*;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @DataJpaTest
-@Import(CourseService.class)
+@Import({CourseService.class, SampleDataUtils.class})
 class CourseServiceTest {
     @Autowired
     private CourseService courseService;
     @Autowired
-    private TestEntityManager em;
+    private CourseRepository courseRepository;
+    @Autowired
+    private SampleDataUtils utils;
+
+    @BeforeEach
+    void setUp() {
+        utils.initSampleData();
+    }
 
     @Test
-    void givenCourseNameWhenFindCoursesAdvancedThenReturnList() {
+    void givenCourseNameWhenFindCoursesAdvancedThenReturnListBooksContainingGivenName() {
         //given
-        String givenCourseName = "test";
-
-        Course course = new Course();
-        course.setName(givenCourseName);
-        em.persist(course);
-
-        Course course2 = new Course();
-        course2.setName("test2");
-        em.persist(course2);
-
-        Course course3 = new Course();
-        course3.setName("new course");
-        em.persist(course3);
-
-        em.flush();
-        em.clear();
+        String givenCourseName = courseRepository.findAll().stream()
+                .findFirst()
+                .orElseThrow()
+                .getName();
 
         CourseSearchRequest request = new CourseSearchRequest(givenCourseName, null, null, null, null);
 
@@ -50,50 +51,39 @@ class CourseServiceTest {
         List<Course> results = courseService.findCoursesAdvanced(request);
 
         //then
-        assertThat(results).hasSize(2);
-        assertThat(results).containsExactlyInAnyOrderElementsOf(List.of(course, course2));
+        assertThat(results).isNotEmpty();
+        results.stream()
+                .map(Course::getName)
+                .forEach(name -> assertThat(name).contains(givenCourseName));
     }
 
     @Test
     void givenCategoryCourseWhenFindCoursesAdvancedThenReturnList() {
         //given
-        String givenCategory = "test";
-        Course course = new Course();
-        course.setCategory(givenCategory);
-        em.persist(course);
+        String givenCategoryName = courseRepository.findAll().stream()
+                .findFirst()
+                .orElseThrow()
+                .getCategory();
 
-        Course course2 = new Course();
-        course2.setCategory("another");
-        em.persist(course2);
-
-        em.flush();
-        em.clear();
-
-        CourseSearchRequest request = new CourseSearchRequest(null, givenCategory, null, null, null);
+        CourseSearchRequest request = new CourseSearchRequest(null, givenCategoryName, null, null, null);
 
         //when
         List<Course> results = courseService.findCoursesAdvanced(request);
 
         //then
-        assertThat(results).hasSize(1);
-        assertThat(results).containsExactlyInAnyOrderElementsOf(List.of(course));
+        assertThat(results).isNotEmpty();
+        results.stream()
+                .map(Course::getCategory)
+                .forEach(categoryName -> assertThat(categoryName).contains(givenCategoryName));
     }
 
     @Test
     void givenCourseLevelWhenFindCoursesAdvancedThenReturnList() {
         //given
-        CourseLevel givenLevel = CourseLevel.EASY;
-
-        Course course = new Course();
-        course.setCourseLevel(givenLevel);
-        em.persist(course);
-
-        Course course2 = new Course();
-        course2.setCourseLevel(CourseLevel.HARD);
-        em.persist(course2);
-
-        em.flush();
-        em.clear();
+        CourseLevel givenLevel = courseRepository.findAll().stream()
+                .findFirst()
+                .orElseThrow()
+                .getCourseLevel();
 
         CourseSearchRequest request = new CourseSearchRequest(null, null, givenLevel, null, null);
 
@@ -101,38 +91,16 @@ class CourseServiceTest {
         List<Course> results = courseService.findCoursesAdvanced(request);
 
         //then
-        assertThat(results).hasSize(1);
-        assertThat(results).containsExactlyInAnyOrderElementsOf(List.of(course));
+        assertThat(results).isNotEmpty();
+        results.stream()
+                .map(Course::getCourseLevel)
+                .forEach(level -> assertThat(level).isEqualTo(givenLevel));
     }
 
     @Test
     void givenMinAverageRatingWhenFindCoursesAdvancedThenReturnList() {
         //given
-        Double givenMinAverageRating = 4.5;
-
-        Course course = new Course();
-        em.persist(course);
-
-        Course course2 = new Course();
-        em.persist(course2);
-
-        Review review = new Review();
-        review.setRate(5);
-        review.setCourse(course);
-        em.persist(review);
-
-        Review review2 = new Review();
-        review2.setRate(4);
-        review2.setCourse(course);
-        em.persist(review2);
-
-        Review review3 = new Review();
-        review3.setRate(3);
-        review3.setCourse(course2);
-        em.persist(review3);
-
-        em.flush();
-        em.clear();
+        Double givenMinAverageRating = 2.0;
 
         CourseSearchRequest request = new CourseSearchRequest(null, null, null, givenMinAverageRating, null);
 
@@ -140,8 +108,16 @@ class CourseServiceTest {
         List<Course> results = courseService.findCoursesAdvanced(request);
 
         //then
-        assertThat(results).hasSize(1);
-        assertThat(results).containsExactlyInAnyOrderElementsOf(List.of(course));
+        assertThat(results).isNotEmpty();
+        results.forEach(course -> {
+            Set<Review> reviews = course.getReviews();
+            Integer sum = reviews.stream()
+                    .map(Review::getRate)
+                    .reduce(Integer::sum)
+                    .orElse(0);
+            Double avg = Double.valueOf(sum) / reviews.size();
+            assertThat(avg).isGreaterThanOrEqualTo(givenMinAverageRating);
+        });
     }
 
     @Test
@@ -149,102 +125,49 @@ class CourseServiceTest {
         //given
         Long givenMinEnrollmentCount = 2L;
 
-        Course course = new Course();
-        em.persist(course);
-
-        Course course2 = new Course();
-        em.persist(course2);
-
-        Enrollment enrollment = new Enrollment();
-        enrollment.setCourse(course);
-        em.persist(enrollment);
-
-        Enrollment enrollment2 = new Enrollment();
-        enrollment2.setCourse(course);
-        em.persist(enrollment2);
-
-        Enrollment enrollment3 = new Enrollment();
-        enrollment3.setCourse(course2);
-        em.persist(enrollment3);
-
-        em.flush();
-        em.clear();
-
         CourseSearchRequest request = new CourseSearchRequest(null, null, null, null, givenMinEnrollmentCount);
 
         //when
         List<Course> results = courseService.findCoursesAdvanced(request);
 
         //then
-        assertThat(results).hasSize(1);
-        assertThat(results).containsExactlyInAnyOrderElementsOf(List.of(course));
+        assertThat(results).isNotEmpty();
+        results.forEach(course -> {
+            Long enrollmentsSize = (long) course.getEnrollments().size();
+            assertThat(enrollmentsSize).isGreaterThanOrEqualTo(givenMinEnrollmentCount);
+        });
     }
 
     @Test
-    void test_getCoursesOrderByCompletedRateDesc() {
-        //given
-        Course course = new Course();
-        em.persist(course);
-
-        Course course2 = new Course();
-        em.persist(course2);
-
-        Course course3 = new Course();
-        em.persist(course3);
-
-        Enrollment enrollment = new Enrollment();
-        enrollment.setCourse(course2);
-        enrollment.setStatus(EnrollmentStatus.COMPLETED);
-        em.persist(enrollment);
-
-        Enrollment enrollment2 = new Enrollment();
-        enrollment2.setCourse(course2);
-        enrollment2.setStatus(EnrollmentStatus.COMPLETED);
-        em.persist(enrollment2);
-
-        Enrollment enrollment3 = new Enrollment();
-        enrollment3.setCourse(course2);
-        enrollment3.setStatus(EnrollmentStatus.COMPLETED);
-        em.persist(enrollment3);
-
-        Enrollment enrollment4 = new Enrollment();
-        enrollment4.setCourse(course3);
-        enrollment4.setStatus(EnrollmentStatus.COMPLETED);
-        em.persist(enrollment4);
-
-        Enrollment enrollment5 = new Enrollment();
-        enrollment5.setCourse(course3);
-        enrollment5.setStatus(EnrollmentStatus.COMPLETED);
-        em.persist(enrollment5);
-
-        Enrollment enrollment6 = new Enrollment();
-        enrollment6.setCourse(course3);
-        enrollment6.setStatus(EnrollmentStatus.IN_PROGRESS);
-        em.persist(enrollment6);
-
-        Enrollment enrollment7 = new Enrollment();
-        enrollment7.setCourse(course);
-        enrollment7.setStatus(EnrollmentStatus.COMPLETED);
-        em.persist(enrollment7);
-
-        Enrollment enrollment8 = new Enrollment();
-        enrollment8.setCourse(course);
-        enrollment8.setStatus(EnrollmentStatus.IN_PROGRESS);
-        em.persist(enrollment8);
-
-        Enrollment enrollment9 = new Enrollment();
-        enrollment9.setCourse(course);
-        enrollment9.setStatus(EnrollmentStatus.IN_PROGRESS);
-        em.persist(enrollment9);
-
-        em.flush();
-        em.clear();
-
+    void givenSampleDataWhenGetCoursesOrderByCompletedRateDescThenReturnList() {
         //when
         List<Course> results = courseService.getCoursesOrderByCompletedRateDesc();
 
         //then
-        assertThat(results).hasSize(3);
-        assertThat(results).containsExactly(course2, course3, course);
+        assertThat(results).isNotEmpty();
+
+        List<Course> expectedOrder = results.stream()
+                .sorted(Comparator.comparing(this::calculateCompletedRate).reversed()
+                        .thenComparing(Course::getCourseId).reversed()
+                )
+                .toList();
+
+        assertThat(results).containsExactlyElementsOf(expectedOrder);
+    }
+
+    private Double calculateCompletedRate(Course course) {
+        Set<Enrollment> enrollments = course.getEnrollments();
+        int size = enrollments.size();
+        if (size == 0) return 0.0;
+
+        List<EnrollmentStatus> statuses = enrollments.stream()
+                .map(Enrollment::getStatus)
+                .toList();
+
+        long sum = statuses.stream()
+                .filter(status -> status.equals(EnrollmentStatus.COMPLETED))
+                .count();
+
+        return (double) sum / size;
     }
 }

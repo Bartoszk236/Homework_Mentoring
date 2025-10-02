@@ -43,11 +43,7 @@ public class Student {
     private LocalDate updatedDate;
 
     @Column(name = "identify_uuid", updatable = false, unique = true)
-    private String identifyUUID;
-
-    public Student() {
-        this.identifyUUID = UUID.randomUUID().toString();
-    }
+    private String identifyUUID = UUID.randomUUID().toString();
 
     @Override
     public boolean equals(Object o) {

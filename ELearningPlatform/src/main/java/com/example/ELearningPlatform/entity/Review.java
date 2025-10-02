@@ -31,7 +31,7 @@ public class Review {
     private Course course;
 
     @Column(name = "identify_id", nullable = false, updatable = false, unique = true)
-    private String identifyId;
+    private String identifyId = UUID.randomUUID().toString();
 
     @CreationTimestamp
     @Column(name = "create_at")
@@ -40,10 +40,6 @@ public class Review {
     @UpdateTimestamp
     @Column(name = "update_at")
     private LocalDateTime updateAt;
-
-    public Review() {
-        this.identifyId = UUID.randomUUID().toString();
-    }
 
     public void setCourse(Course course) {
         this.course = course;

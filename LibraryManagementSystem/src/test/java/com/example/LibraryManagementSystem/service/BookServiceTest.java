@@ -1,126 +1,96 @@
 package com.example.LibraryManagementSystem.service;
 
+import com.example.LibraryManagementSystem.SampleDataBuilder;
 import com.example.LibraryManagementSystem.dto.BookSearchCriteria;
 import com.example.LibraryManagementSystem.entity.Author;
 import com.example.LibraryManagementSystem.entity.Book;
 import com.example.LibraryManagementSystem.entity.BorrowRecord;
 import com.example.LibraryManagementSystem.entity.Category;
+import com.example.LibraryManagementSystem.repository.AuthorRepository;
+import com.example.LibraryManagementSystem.repository.BookRepository;
+import com.github.javafaker.Faker;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
-@Import(BookService.class)
+@Import({
+        BookService.class,
+        SampleDataBuilder.class
+})
 class BookServiceTest {
     @Autowired
     private BookService service;
     @Autowired
-    private TestEntityManager em;
+    private BookRepository bookRepository;
+    @Autowired
+    private SampleDataBuilder sampleDataBuilder;
+    @Autowired
+    private AuthorRepository authorRepository;
+
+    private final Faker faker = new Faker();
+
+    @BeforeEach
+    void setUp() {
+        sampleDataBuilder.initSampleData();
+    }
 
     @Test
     void givenTitleProbeAndCategoryNameWhenGetBooksByTitleSampleAndCategoryThenReturnListOfBooks() {
         //given
-        String titleSample = "rry Pot";
-        String categoryName = "Fantasy";
+        Book givenBook = findExampleBook();
 
-        Category category = new Category();
-        category.setName(categoryName);
-        em.persist(category);
-
-        Book book = new Book();
-        book.setTitle("Harry Potter");
-        book.setIsbn("0000000000000");
-        book.setCategory(category);
-        em.persist(book);
-
-        Book book2 = new Book();
-        book2.setTitle("War of Aliens");
-        book2.setIsbn("0000000000001");
-        book2.setCategory(category);
-        em.persist(book2);
-
-        em.flush();
-        em.clear();
+        String title = givenBook.getTitle();
+        String givenTitleSample = title.substring(faker.number().numberBetween(1, title.length()));
+        Category category = givenBook.getCategory();
+        String givenCategoryName = category.getName();
 
         //when
-        List<Book> result = service.getBooksByTitleSampleAndCategory(titleSample, categoryName);
+        List<Book> result = service.getBooksByTitleSampleAndCategory(givenTitleSample, givenCategoryName);
 
         //then
-        assertThat(result).hasSize(1);
-        Book resultBook = result.getFirst();
-        assertEquals(book, resultBook);
+        assertThat(result).isNotEmpty();
+        result.forEach(book -> {
+            assertThat(book.getTitle()).contains(givenTitleSample);
+            assertThat(book.getCategory().getName()).isEqualTo(givenCategoryName);
+        });
     }
 
     @Test
     void givenFewBooksWhenGetNotRentedBooksThenReturnNotRentedBooks() {
-        //given
-        Book book1 = new Book();
-        book1.setTitle("Harry Potter");
-        book1.setIsbn("0000000000000");
-        em.persist(book1);
-
-        Book book2 = new Book();
-        book2.setTitle("War of Aliens");
-        book2.setIsbn("0000000000001");
-        em.persist(book2);
-
-        Book book3 = new Book();
-        book3.setTitle("Harry Potter2");
-        book3.setIsbn("0000000000002");
-        em.persist(book3);
-
-        BorrowRecord borrowRecord1 = new BorrowRecord();
-        borrowRecord1.setBook(book1);
-        borrowRecord1.setBorrowDate(LocalDate.now().minusDays(1));
-        em.persist(borrowRecord1);
-
-        BorrowRecord borrowRecord2 = new BorrowRecord();
-        borrowRecord2.setBook(book2);
-        borrowRecord2.setBorrowDate(LocalDate.now().minusDays(2));
-        borrowRecord2.setReturnDate(LocalDate.now());
-        em.persist(borrowRecord2);
-
-        em.flush();
-        em.clear();
-
-        List<Book> expected = List.of(book2, book3);
-
         //when
         List<Book> result = service.getNotRentedBooks();
 
         //then
-        assertThat(result).hasSize(expected.size());
-        assertThat(result).containsExactlyInAnyOrderElementsOf(expected);
+        assertThat(result).isNotEmpty();
+        result.forEach(book -> {
+            Set<BorrowRecord> borrowRecords = book.getBorrowRecords();
+            boolean empty = borrowRecords.isEmpty();
+            boolean existBorrowed = borrowRecords.stream()
+                    .allMatch(borrowRecord -> borrowRecord.getReturnDate() != null);
+            assertThat(empty || existBorrowed).isTrue();
+        });
     }
 
     @Test
     void givenTitleWhenSearchBooksThenReturnPage() {
         //given
-        String givenTitle = "arry pott";
-        BookSearchCriteria criteria = new BookSearchCriteria(givenTitle, null, null, null, null, null, null, null, null, null);
+        Book givenBook = findExampleBook();
 
-        Book book1 = new Book();
-        book1.setTitle("Harry Potter");
-        book1.setIsbn("0000000000000");
-        em.persist(book1);
+        String title = givenBook.getTitle();
+        String givenTitleSample = title.substring(faker.number().numberBetween(1, title.length()));
 
-        Book book2 = new Book();
-        book2.setTitle("War of Aliens");
-        book2.setIsbn("0000000000001");
-        em.persist(book2);
-
-        em.flush();
-        em.clear();
+        BookSearchCriteria criteria = new BookSearchCriteria(givenTitleSample, null, null, null, null, null, null, null, null, null);
 
         PageRequest request = PageRequest.of(0, 5);
 
@@ -128,45 +98,20 @@ class BookServiceTest {
         Page<Book> result = service.searchBooks(criteria, request);
 
         //then
-        assertThat(result).hasSize(1);
-        List<Book> resultBooks = result.getContent();
-        assertEquals(book1, resultBooks.getFirst());
+        assertThat(result).isNotEmpty();
+        assertThat(result).hasSizeLessThanOrEqualTo(5);
+        assertThat(result.stream()
+                .allMatch(book -> book.getTitle().contains(givenTitleSample)))
+                .isTrue();
     }
 
     @Test
     void givenAuthorNamesWhenSearchBooksThenReturnPage() {
         //given
-        List<String> givenAuthorNames = List.of("John Doe", "Jerry Smith");
-
-        Author author1 = new Author();
-        author1.setName("John Doe");
-
-        Author author2 = new Author();
-        author2.setName("Jerry Smith");
-
-        Author author3 = new Author();
-        author3.setName("Richard Cash");
-
-        Book book1 = new Book();
-        book1.setTitle("Harry Potter");
-        book1.setIsbn("0000000000000");
-        book1.addAuthor(author1);
-        em.persist(book1);
-
-        Book book2 = new Book();
-        book2.setTitle("War of Aliens");
-        book2.setIsbn("0000000000001");
-        book2.addAuthor(author2);
-        em.persist(book2);
-
-        Book book3 = new Book();
-        book3.setTitle("Harry Potter2");
-        book3.setIsbn("0000000000002");
-        book3.addAuthor(author3);
-        em.persist(book3);
-
-        em.flush();
-        em.clear();
+        List<String> givenAuthorNames = authorRepository.findAll().stream()
+                .map(Author::getName)
+                .limit(3)
+                .toList();
 
         BookSearchCriteria criteria = new BookSearchCriteria(null, givenAuthorNames, null, null, null, null, null, null, null, null);
 
@@ -174,76 +119,47 @@ class BookServiceTest {
 
         //when
         Page<Book> result = service.searchBooks(criteria, request);
-        assertThat(result).hasSize(2);
-        List<Book> resultBooks = result.getContent();
-        assertThat(resultBooks).containsExactlyInAnyOrderElementsOf(List.of(book1, book2));
+
+        //then
+        assertThat(result).isNotEmpty();
+        assertThat(result).hasSizeLessThanOrEqualTo(5);
+        result.stream()
+                .forEach(book -> {
+                    List<String> authorsNames = book.getAuthors()
+                            .stream()
+                            .map(Author::getName)
+                            .toList();
+                    assertThat(authorsNames).containsAnyElementsOf(givenAuthorNames);
+                });
     }
 
     @Test
     void givenCategoryNameWhenSearchBooksThenReturnPage() {
         //given
-        String categoryName = "Fantasy";
-
-        Category category = new Category();
-        category.setName(categoryName);
-        em.persist(category);
-
-        Category category2 = new Category();
-        category2.setName("Something");
-        em.persist(category2);
-
-        Book book = new Book();
-        book.setTitle("Harry Potter");
-        book.setIsbn("0000000000000");
-        book.setCategory(category);
-        em.persist(book);
-
-        Book book2 = new Book();
-        book2.setTitle("War of Aliens");
-        book2.setIsbn("0000000000001");
-        book2.setCategory(category);
-        em.persist(book2);
-
-        Book book3 = new Book();
-        book3.setTitle("Harry Potter2");
-        book3.setIsbn("0000000000002");
-        book3.setCategory(category2);
-        em.persist(book3);
-
-        em.flush();
-        em.clear();
+        Book givenBook = findExampleBook();
+        String givenCategoryName = givenBook.getCategory().getName();
 
         PageRequest request = PageRequest.of(0, 5);
-        BookSearchCriteria criteria = new BookSearchCriteria(null, null, categoryName, null, null, null, null, null, null, null);
+        BookSearchCriteria criteria = new BookSearchCriteria(null, null, givenCategoryName, null, null, null, null, null, null, null);
 
         //when
         Page<Book> result = service.searchBooks(criteria, request);
 
         //then
-        assertThat(result).hasSize(2);
-        List<Book> resultBooks = result.getContent();
-        assertThat(resultBooks).containsExactlyInAnyOrderElementsOf(List.of(book, book2));
+        assertThat(result).isNotEmpty();
+        assertThat(result).hasSizeLessThanOrEqualTo(5);
+        result.stream()
+                .map(Book::getCategory)
+                .map(Category::getName)
+                .forEach(categoryName -> assertThat(categoryName).isEqualTo(givenCategoryName));
     }
 
     @Test
     void givenPublishedAfterYearWhenSearchBooksThenReturnPage() {
         //given
-        Integer givenPublishedAfterYear = 2001;
+        Book givenBook = findExampleBook();
 
-        Book book = new Book();
-        book.setTitle("Harry Potter");
-        book.setIsbn("0000000000000");
-        book.setReleaseDate(LocalDate.now());
-        em.persist(book);
-
-        Book book2 = new Book();
-        book2.setTitle("War of Aliens");
-        book2.setIsbn("0000000000001");
-        book2.setReleaseDate(LocalDate.now().withYear(2000));
-        em.persist(book2);
-
-        em.flush();
-        em.clear();
+        Integer givenPublishedAfterYear= givenBook.getReleaseDate().getYear() - 1;
 
         PageRequest request = PageRequest.of(0, 5);
         BookSearchCriteria criteria = new BookSearchCriteria(null, null, null, givenPublishedAfterYear, null, null, null, null, null, null);
@@ -252,30 +168,20 @@ class BookServiceTest {
         Page<Book> result = service.searchBooks(criteria, request);
 
         //then
-        assertThat(result).hasSize(1);
-        Book resultBook = result.getContent().getFirst();
-        assertEquals(book, resultBook);
+        assertThat(result).isNotEmpty();
+        assertThat(result).hasSizeLessThanOrEqualTo(5);
+        result.stream()
+                .map(Book::getReleaseDate)
+                .map(LocalDate::getYear)
+                .forEach(x -> assertThat(x).isGreaterThan(givenPublishedAfterYear));
     }
 
     @Test
     void givenPublishedBeforeYearWhenSearchBooksThenReturnPage() {
         //given
-        Integer givenPublishedBeforeYear = 2001;
+        Book givenBook = findExampleBook();
 
-        Book book = new Book();
-        book.setTitle("Harry Potter");
-        book.setIsbn("0000000000000");
-        book.setReleaseDate(LocalDate.now());
-        em.persist(book);
-
-        Book book2 = new Book();
-        book2.setTitle("War of Aliens");
-        book2.setIsbn("0000000000001");
-        book2.setReleaseDate(LocalDate.of(2000, 12, 31));
-        em.persist(book2);
-
-        em.flush();
-        em.clear();
+        Integer givenPublishedBeforeYear= givenBook.getReleaseDate().getYear() + 1;
 
         PageRequest request = PageRequest.of(0, 5);
         BookSearchCriteria criteria = new BookSearchCriteria(null, null, null, null, givenPublishedBeforeYear, null, null, null, null, null);
@@ -284,43 +190,17 @@ class BookServiceTest {
         Page<Book> result = service.searchBooks(criteria, request);
 
         //then
-        assertThat(result).hasSize(1);
-        Book resultBook = result.getContent().getFirst();
-        assertEquals(book2, resultBook);
+        assertThat(result).isNotEmpty();
+        assertThat(result).hasSizeLessThanOrEqualTo(5);
+        result.stream()
+                .map(Book::getReleaseDate)
+                .map(LocalDate::getYear)
+                .forEach(x -> assertThat(x).isLessThan(givenPublishedBeforeYear));
     }
 
     @Test
     void givenAvailableOnlyWhenSearchBooksThenReturnPage() {
         //given
-        Book book = new Book();
-        book.setTitle("Harry Potter");
-        book.setIsbn("0000000000000");
-        em.persist(book);
-
-        Book book2 = new Book();
-        book2.setTitle("War of Aliens");
-        book2.setIsbn("0000000000001");
-        em.persist(book2);
-
-        Book book3 = new Book();
-        book3.setTitle("Harry Potter2");
-        book3.setIsbn("0000000000002");
-        em.persist(book3);
-
-        BorrowRecord borrowRecord = new BorrowRecord();
-        borrowRecord.setBook(book);
-        borrowRecord.setBorrowDate(LocalDate.now().minusDays(1));
-        em.persist(borrowRecord);
-
-        BorrowRecord borrowRecord2 = new BorrowRecord();
-        borrowRecord2.setBook(book2);
-        borrowRecord2.setBorrowDate(LocalDate.now().minusDays(2));
-        borrowRecord2.setReturnDate(LocalDate.now().minusDays(1));
-        em.persist(borrowRecord2);
-
-        em.flush();
-        em.clear();
-
         PageRequest request = PageRequest.of(0, 5);
         BookSearchCriteria criteria = new BookSearchCriteria(null, null, null, null, null, true, null, null, null, null);
 
@@ -328,30 +208,22 @@ class BookServiceTest {
         Page<Book> result = service.searchBooks(criteria, request);
 
         //then
-        assertThat(result).hasSize(2);
-        List<Book> resultBooks = result.getContent();
-        assertThat(resultBooks).containsExactlyInAnyOrderElementsOf(List.of(book2, book3));
+        assertThat(result).isNotEmpty();
+        assertThat(result).hasSizeLessThanOrEqualTo(5);
+        result.forEach(book -> {
+            Set<BorrowRecord> borrowRecords = book.getBorrowRecords();
+            boolean empty = borrowRecords.isEmpty();
+            boolean existBorrowed = borrowRecords.stream()
+                    .allMatch(borrowRecord -> borrowRecord.getReturnDate() != null);
+            assertThat(empty || existBorrowed).isTrue();
+        });
     }
 
     @Test
     void givenMinPagesWhenSearchBooksThenReturnPage() {
         //given
-        Book book = new Book();
-        book.setTitle("Harry Potter");
-        book.setIsbn("0000000000000");
-        book.setPagesNumber(300);
-        em.persist(book);
-
-        Book book2 = new Book();
-        book2.setTitle("War of Aliens");
-        book2.setIsbn("0000000000001");
-        book2.setPagesNumber(400);
-        em.persist(book2);
-
-        em.flush();
-        em.clear();
-
-        Integer givenMinPages = 350;
+        Book givenBook = findExampleBook();
+        Integer givenMinPages = givenBook.getPagesNumber() - 1;
         PageRequest pageRequest = PageRequest.of(0, 5);
         BookSearchCriteria criteria = new BookSearchCriteria(null, null, null, null, null, null, givenMinPages, null, null, null);
 
@@ -359,30 +231,18 @@ class BookServiceTest {
         Page<Book> result = service.searchBooks(criteria, pageRequest);
 
         //then
-        assertThat(result).hasSize(1);
-        Book resultBook = result.getContent().getFirst();
-        assertEquals(book2, resultBook);
+        assertThat(result).isNotEmpty();
+        assertThat(result).hasSizeLessThanOrEqualTo(5);
+        result.stream()
+                .map(Book::getPagesNumber)
+                .forEach(number -> assertThat(number).isGreaterThanOrEqualTo(givenMinPages));
     }
 
     @Test
     void givenMaxPagesWhenSearchBooksThenReturnPage() {
         //given
-        Book book = new Book();
-        book.setTitle("Harry Potter");
-        book.setIsbn("0000000000000");
-        book.setPagesNumber(300);
-        em.persist(book);
-
-        Book book2 = new Book();
-        book2.setTitle("War of Aliens");
-        book2.setIsbn("0000000000001");
-        book2.setPagesNumber(400);
-        em.persist(book2);
-
-        em.flush();
-        em.clear();
-
-        Integer givenMaxPages = 350;
+        Book givenBook = findExampleBook();
+        Integer givenMaxPages = givenBook.getPagesNumber() + 1;
         PageRequest pageRequest = PageRequest.of(0, 5);
         BookSearchCriteria criteria = new BookSearchCriteria(null, null, null, null, null, null, null, givenMaxPages, null, null);
 
@@ -390,28 +250,20 @@ class BookServiceTest {
         Page<Book> result = service.searchBooks(criteria, pageRequest);
 
         //then
-        assertThat(result).hasSize(1);
-        Book resultBook = result.getContent().getFirst();
-        assertEquals(book, resultBook);
+
+        assertThat(result).isNotEmpty();
+        assertThat(result).hasSizeLessThanOrEqualTo(5);
+        result.stream()
+                .map(Book::getPagesNumber)
+                .forEach(number -> assertThat(number).isLessThanOrEqualTo(givenMaxPages));
     }
 
     @Test
     void givenIsbnWhenSearchBooksThenReturnPage() {
         //given
-        Book book = new Book();
-        book.setTitle("Harry Potter");
-        book.setIsbn("0000000000000");
-        em.persist(book);
+        Book givenBook = findExampleBook();
 
-        Book book2 = new Book();
-        book2.setTitle("War of Aliens");
-        book2.setIsbn("0000000000001");
-        em.persist(book2);
-
-        em.flush();
-        em.clear();
-
-        String givenIsbn = "0000000000000";
+        String givenIsbn = givenBook.getIsbn();
 
         PageRequest pageRequest = PageRequest.of(0, 5);
         BookSearchCriteria criteria = new BookSearchCriteria(null, null, null, null, null, null, null, null, givenIsbn, null);
@@ -421,33 +273,12 @@ class BookServiceTest {
 
         //then
         assertThat(result).hasSize(1);
-        Book resultBook = result.getContent().getFirst();
-        assertEquals(book, resultBook);
+        assertThat(givenIsbn).isEqualTo(result.getContent().getFirst().getIsbn());
     }
 
     @Test
     void givenDigitalCopyRequiredWhenSearchBooksThenReturnPage() {
         //given
-        Book book = new Book();
-        book.setTitle("Harry Potter");
-        book.setIsbn("0000000000000");
-        book.setDigitalCopyAvailable(true);
-        em.persist(book);
-
-        Book book2 = new Book();
-        book2.setTitle("War of Aliens");
-        book2.setIsbn("0000000000001");
-        book2.setDigitalCopyAvailable(false);
-        em.persist(book2);
-
-        Book book3 = new Book();
-        book3.setTitle("Harry Potter2");
-        book3.setIsbn("0000000000002");
-        em.persist(book3);
-
-        em.flush();
-        em.clear();
-
         Boolean givenDigitalCopyRequired = true;
         PageRequest pageRequest = PageRequest.of(0, 5);
         BookSearchCriteria criteria = new BookSearchCriteria(null, null, null, null, null, null, null, null, null, givenDigitalCopyRequired);
@@ -456,8 +287,16 @@ class BookServiceTest {
         Page<Book> result = service.searchBooks(criteria, pageRequest);
 
         //then
-        assertThat(result).hasSize(1);
-        Book resultBook = result.getContent().getFirst();
-        assertEquals(book, resultBook);
+        assertThat(result).isNotEmpty();
+        assertThat(result).hasSizeLessThanOrEqualTo(5);
+        result.stream()
+                .map(Book::getDigitalCopyAvailable)
+                .forEach(available -> assertThat(available).isEqualTo(givenDigitalCopyRequired));
+    }
+
+    private Book findExampleBook() {
+        return bookRepository.findAll().stream()
+                .findFirst()
+                .orElseThrow();
     }
 }

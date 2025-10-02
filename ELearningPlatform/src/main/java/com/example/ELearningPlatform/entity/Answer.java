@@ -28,7 +28,7 @@ public abstract class Answer {
     private Student student;
 
     @Column(name = "identify_id", nullable = false, unique = true, updatable = false)
-    private String identifyId;
+    private String identifyId = UUID.randomUUID().toString();
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -37,10 +37,6 @@ public abstract class Answer {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    public Answer() {
-        this.identifyId = UUID.randomUUID().toString();
-    }
 
     public abstract String getType();
 

@@ -1,6 +1,7 @@
 package com.example.LibraryManagementSystem.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -11,6 +12,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "publishers")
+@Getter
 public class Publisher {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

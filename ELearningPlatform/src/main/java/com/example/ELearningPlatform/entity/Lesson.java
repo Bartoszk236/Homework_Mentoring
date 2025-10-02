@@ -31,7 +31,7 @@ public class Lesson {
     private Set<Quiz> quizzes = new HashSet<>();
 
     @Column(name = "identify_id", nullable = false, unique = true, updatable = false)
-    private String identifyId;
+    private String identifyId = UUID.randomUUID().toString();
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -40,10 +40,6 @@ public class Lesson {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    public Lesson() {
-        this.identifyId = UUID.randomUUID().toString();
-    }
 
     public void setCourse(Course course) {
         this.course = course;

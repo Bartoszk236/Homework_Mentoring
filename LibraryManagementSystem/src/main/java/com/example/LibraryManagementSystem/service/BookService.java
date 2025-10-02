@@ -1,11 +1,10 @@
 package com.example.LibraryManagementSystem.service;
 
 import com.example.LibraryManagementSystem.dto.BookSearchCriteria;
-import com.example.LibraryManagementSystem.entity.Author;
 import com.example.LibraryManagementSystem.entity.Book;
-import com.example.LibraryManagementSystem.entity.BorrowRecord;
 import com.example.LibraryManagementSystem.entity.Category;
 import com.example.LibraryManagementSystem.repository.BookRepository;
+import com.example.LibraryManagementSystem.utils.BookSpecUtils;
 import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
@@ -15,9 +14,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.LibraryManagementSystem.utils.BookSpecUtils.*;
+import static com.example.LibraryManagementSystem.utils.SpecUtils.*;
 
 @Service
 @RequiredArgsConstructor
@@ -51,80 +51,19 @@ public class BookService {
     }
 
     public Page<Book> searchBooks(BookSearchCriteria criteria, Pageable pageable) {
-        Specification<Book> spec = (root, query, cb) -> {
-
-            List<Predicate> predicates = new ArrayList<>();
-
-            if (criteria.title() != null) {
-                predicates.add(cb.like(cb.lower(root.get("title")), like(criteria.title())));
-            }
-
-            if (criteria.authorNames() != null && !criteria.authorNames().isEmpty()) {
-                Join<Book, Author> join = root.join("authors", JoinType.LEFT);
-
-                List<Predicate> ors = new ArrayList<>();
-                for (String authorName : criteria.authorNames()) {
-                    ors.add(cb.like(cb.lower(join.get("name")), like(authorName)));
-                }
-                if (!ors.isEmpty()) {
-                    predicates.add(cb.or(ors.toArray(Predicate[]::new)));
-                    query.distinct(true);
-                }
-            }
-
-            if (criteria.categoryName() != null) {
-                predicates.add(cb.like(cb.lower(root.get("category").get("name")), like(criteria.categoryName())));
-            }
-
-            if (criteria.publishedAfterYear() != null) {
-                LocalDate publishedAfterYear = LocalDate.of(criteria.publishedAfterYear() + 1, 1, 1);
-                predicates.add(cb.greaterThan(root.get("releaseDate"), publishedAfterYear));
-            }
-
-            if (criteria.publishedBeforeYear() != null) {
-                LocalDate publishedBeforeYear = LocalDate.of(criteria.publishedBeforeYear(), 1, 1);
-                predicates.add(cb.lessThan(root.get("releaseDate"), publishedBeforeYear));
-            }
-
-            if (criteria.availableOnly() != null) {
-                if (criteria.availableOnly()) {
-                    Subquery<Long> sq = query.subquery(Long.class);
-                    Root<BorrowRecord> rootBorrow = sq.from(BorrowRecord.class);
-                    sq.select(cb.literal(1L));
-                    Predicate sameBook = cb.equal(rootBorrow.get("book").get("id"),
-                            root.get("id")
-                    );
-                    Predicate openBorrow = cb.isNull(rootBorrow.get("returnDate"));
-                    sq.where(sameBook, openBorrow);
-                    predicates.add(cb.not(cb.exists(sq)));
-                }
-            }
-
-
-            if (criteria.minPages() != null) {
-                predicates.add(cb.greaterThanOrEqualTo(root.get("pagesNumber"), criteria.minPages()));
-            }
-
-            if (criteria.maxPages() != null) {
-                predicates.add(cb.lessThanOrEqualTo(root.get("pagesNumber"), criteria.maxPages()));
-            }
-
-            if (criteria.isbn() != null) {
-                predicates.add(cb.equal(root.get("isbn"), criteria.isbn()));
-            }
-
-            if (criteria.digitalCopyRequired() != null) {
-                predicates.add(cb.equal(root.get("digitalCopyAvailable"), criteria.digitalCopyRequired()));
-            }
-
-            return predicates.isEmpty() ? cb.conjunction() : cb.and(predicates.toArray(Predicate[]::new));
-        };
-
-        return bookRepository.findAll(spec, pageable);
-    }
-
-    private String like(String s) {
-        String t = s.trim().toLowerCase();
-        return "%" + t + "%";
+        Specification<Book> specification = Specification.allOf(
+                List.of(
+                        optional(criteria.title(), BookSpecUtils::titleContains),
+                        optionalNotEmpty(criteria.authorNames(), BookSpecUtils::authorNameIn),
+                        optional(criteria.categoryName(), BookSpecUtils::categoryNameContains),
+                        optional(criteria.publishedAfterYear(), BookSpecUtils::publishedAfterYear),
+                        optional(criteria.publishedBeforeYear(), BookSpecUtils::publishedBeforeYear),
+                        optional(criteria.minPages(), BookSpecUtils::pagesNumberGreaterThanOrEqual),
+                        optional(criteria.maxPages(), BookSpecUtils::pagesNumberLessThanOrEqual),
+                        optional(criteria.isbn(), BookSpecUtils::isbnEquals),
+                        optional(criteria.digitalCopyRequired(), BookSpecUtils::digitalCopyRequired),
+                        Boolean.TRUE.equals(criteria.availableOnly()) ? availableOnly() : null
+                ));
+        return bookRepository.findAll(specification, pageable);
     }
 }

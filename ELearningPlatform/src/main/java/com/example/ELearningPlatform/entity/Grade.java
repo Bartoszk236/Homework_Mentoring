@@ -25,7 +25,7 @@ public class Grade {
     private Enrollment enrollment;
 
     @Column(name = "identify_id", nullable = false, unique = true, updatable = false)
-    private String identifyId;
+    private String identifyId = UUID.randomUUID().toString();
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -34,10 +34,6 @@ public class Grade {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    public Grade() {
-        this.identifyId = UUID.randomUUID().toString();
-    }
 
     public void setEnrollment(Enrollment enrollment) {
         this.enrollment = enrollment;

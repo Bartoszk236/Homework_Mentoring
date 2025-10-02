@@ -27,11 +27,10 @@ public class StudentService {
                             LocalDate.now().minusMonths(6)
                     ))
                     .groupBy(root)
-                    .orderBy(cb.desc(countOfBorrows));
+                    .orderBy(cb.desc(countOfBorrows), cb.asc(root.get("id")));
 
             return cb.conjunction();
         };
-
 
         PageRequest pageRequest = PageRequest.of(page, pageSize);
         return studentRepository.findAll(specification, pageRequest);

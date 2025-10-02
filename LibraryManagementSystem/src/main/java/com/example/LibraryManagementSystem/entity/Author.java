@@ -1,6 +1,7 @@
 package com.example.LibraryManagementSystem.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -18,6 +19,7 @@ import java.util.UUID;
                 @Index(name = "idx_name", columnList = "name")
         }
 )
+@Getter
 public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +34,7 @@ public class Author {
     private Set<Book> books = new HashSet<>();
 
     @Column(name = "identify_uuid", updatable = false, unique = true)
-    private String identifyUUID;
+    private String identifyUUID = UUID.randomUUID().toString();
 
     @Column(name = "created_date")
     @CreatedDate
@@ -41,10 +43,6 @@ public class Author {
     @Column(name = "updated_date")
     @LastModifiedDate
     private LocalDate updatedDate;
-
-    public Author() {
-        this.identifyUUID = UUID.randomUUID().toString();
-    }
 
     void addBook(Book book) {
         books.add(book);

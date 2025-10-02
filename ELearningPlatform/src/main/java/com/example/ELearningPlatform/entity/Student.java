@@ -40,7 +40,7 @@ public class Student {
     private Set<Enrollment> enrollments = new HashSet<>();
 
     @Column(name = "identify_id", nullable = false, unique = true, updatable = false)
-    private String identifyId;
+    private String identifyId = UUID.randomUUID().toString();
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -49,10 +49,6 @@ public class Student {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    public Student() {
-        this.identifyId = UUID.randomUUID().toString();
-    }
 
     @Override
     public boolean equals(Object o) {

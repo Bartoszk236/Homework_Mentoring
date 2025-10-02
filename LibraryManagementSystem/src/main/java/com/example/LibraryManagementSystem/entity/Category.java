@@ -1,6 +1,7 @@
 package com.example.LibraryManagementSystem.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -13,6 +14,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "categories")
+@Getter
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,11 +37,7 @@ public class Category {
     private LocalDate updatedDate;
 
     @Column(name = "identify_uuid", updatable = false, unique = true)
-    private String identifyUUID;
-
-    public Category() {
-        this.identifyUUID = UUID.randomUUID().toString();
-    }
+    private String identifyUUID = UUID.randomUUID().toString();
 
     @Override
     public boolean equals(Object o) {

@@ -27,7 +27,7 @@ public class Tag {
     private Set<Course> courses = new HashSet<>();
 
     @Column(name = "identify_id", nullable = false, unique = true, updatable = false)
-    private String identifyId;
+    private String identifyId = UUID.randomUUID().toString();
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -36,10 +36,6 @@ public class Tag {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    public Tag() {
-        this.identifyId = UUID.randomUUID().toString();
-    }
 
     @Override
     public boolean equals(Object o) {

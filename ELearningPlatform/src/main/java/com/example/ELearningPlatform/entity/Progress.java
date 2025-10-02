@@ -27,7 +27,7 @@ public class Progress {
     private Enrollment enrollment;
 
     @Column(name = "identify_id", nullable = false, unique = true, updatable = false)
-    private String identifyId;
+    private String identifyId = UUID.randomUUID().toString();
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -36,10 +36,6 @@ public class Progress {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    public Progress() {
-        this.identifyId = UUID.randomUUID().toString();
-    }
 
     public void setEnrollment(Enrollment enrollment) {
         this.enrollment = enrollment;
