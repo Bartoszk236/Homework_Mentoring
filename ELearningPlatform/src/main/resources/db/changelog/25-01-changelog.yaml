@@ -1,0 +1,734 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1758807350252-1
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_answer
+                  name: answer_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: answer_type
+                  type: VARCHAR(31)
+              - column:
+                  name: question_id
+                  type: BIGINT
+              - column:
+                  name: student_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: identify_id
+                  type: VARCHAR(255)
+              - column:
+                  name: choice_index
+                  type: INT
+              - column:
+                  name: answer_value
+                  type: BOOLEAN
+              - column:
+                  name: text
+                  type: VARCHAR(255)
+            tableName: answer
+      rollback:
+        - dropTable:
+            tableName: answer
+  - changeSet:
+      id: 1758807350252-2
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_courses
+                  name: course_id
+                  type: BIGINT
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: identify_id
+                  type: VARCHAR(255)
+            tableName: courses
+      rollback:
+        - dropTable:
+            tableName: courses
+  - changeSet:
+      id: 1758807350252-3
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_enrollments
+                  name: enrollment_id
+                  type: BIGINT
+              - column:
+                  name: status
+                  type: VARCHAR(255)
+              - column:
+                  name: student_id
+                  type: BIGINT
+              - column:
+                  name: course_id
+                  type: BIGINT
+              - column:
+                  name: grade_id
+                  type: BIGINT
+              - column:
+                  name: progress_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: identify_id
+                  type: VARCHAR(255)
+            tableName: enrollments
+      rollback:
+        - dropTable:
+            tableName: enrollments
+  - changeSet:
+      id: 1758807350252-4
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_grades
+                  name: grade_id
+                  type: BIGINT
+              - column:
+                  name: grade
+                  type: DOUBLE
+              - column:
+                  constraints:
+                    nullable: false
+                  name: identify_id
+                  type: VARCHAR(255)
+            tableName: grades
+      rollback:
+        - dropTable:
+            tableName: grades
+  - changeSet:
+      id: 1758807350252-5
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_lessons
+                  name: lesson_id
+                  type: BIGINT
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: course_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: identify_id
+                  type: VARCHAR(255)
+            tableName: lessons
+      rollback:
+        - dropTable:
+            tableName: lessons
+  - changeSet:
+      id: 1758807350252-6
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: answer_id
+                  type: BIGINT
+              - column:
+                  name: choice_indexes
+                  type: INT
+            tableName: ma_answers
+      rollback:
+        - dropTable:
+            tableName: ma_answers
+  - changeSet:
+      id: 1758807350252-7
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: question_id
+                  type: BIGINT
+              - column:
+                  name: correct_indexes
+                  type: INT
+            tableName: mc_correct_indexes
+      rollback:
+        - dropTable:
+            tableName: mc_correct_indexes
+  - changeSet:
+      id: 1758807350252-8
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: question_id
+                  type: BIGINT
+              - column:
+                  name: option_values
+                  type: VARCHAR(255)
+            tableName: mc_options
+      rollback:
+        - dropTable:
+            tableName: mc_options
+  - changeSet:
+      id: 1758807350252-9
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: question_id
+                  type: BIGINT
+              - column:
+                  name: option_values
+                  type: VARCHAR(255)
+            tableName: oc_options
+      rollback:
+        - dropTable:
+            tableName: oc_options
+  - changeSet:
+      id: 1758807350252-10
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_progress
+                  name: progress_id
+                  type: BIGINT
+              - column:
+                  name: completed_lessons
+                  type: INT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: identify_id
+                  type: VARCHAR(255)
+            tableName: progress
+      rollback:
+        - dropTable:
+            tableName: progress
+  - changeSet:
+      id: 1758807350252-11
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_question
+                  name: question_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: question_type
+                  type: VARCHAR(31)
+              - column:
+                  name: text
+                  type: VARCHAR(255)
+              - column:
+                  name: duration
+                  type: INT
+              - column:
+                  name: quiz_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: identify_id
+                  type: VARCHAR(255)
+              - column:
+                  name: correct_index
+                  type: INT
+              - column:
+                  name: max_chars
+                  type: INT
+              - column:
+                  name: correct
+                  type: BOOLEAN
+            tableName: question
+      rollback:
+        - dropTable:
+            tableName: question
+  - changeSet:
+      id: 1758807350252-12
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_quizzes
+                  name: quiz_id
+                  type: BIGINT
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: lesson_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: identify_id
+                  type: VARCHAR(255)
+            tableName: quizzes
+      rollback:
+        - dropTable:
+            tableName: quizzes
+  - changeSet:
+      id: 1758807350252-13
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_students
+                  name: student_id
+                  type: BIGINT
+              - column:
+                  name: first_name
+                  type: VARCHAR(255)
+              - column:
+                  name: last_name
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: identify_id
+                  type: VARCHAR(255)
+              - column:
+                  name: address_city
+                  type: VARCHAR(255)
+              - column:
+                  name: address_street
+                  type: VARCHAR(255)
+              - column:
+                  name: address_building_number
+                  type: VARCHAR(255)
+              - column:
+                  name: address_apartment_number
+                  type: VARCHAR(255)
+              - column:
+                  name: address_zipcode
+                  type: VARCHAR(255)
+              - column:
+                  name: address_country
+                  type: VARCHAR(255)
+            tableName: students
+      rollback:
+        - dropTable:
+            tableName: students
+  - changeSet:
+      id: 1758807350252-14
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: identify_id
+            constraintName: uc_answer_identify
+            tableName: answer
+      rollback:
+        - dropUniqueConstraint:
+            constraintName: uc_answer_identify
+            tableName: answer
+  - changeSet:
+      id: 1758807350252-15
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: identify_id
+            constraintName: uc_courses_identify
+            tableName: courses
+      rollback:
+        - dropUniqueConstraint:
+            constraintName: uc_courses_identify
+            tableName: courses
+  - changeSet:
+      id: 1758807350252-16
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: grade_id
+            constraintName: uc_enrollments_grade
+            tableName: enrollments
+      rollback:
+        - dropUniqueConstraint:
+            constraintName: uc_enrollments_grade
+            tableName: enrollments
+  - changeSet:
+      id: 1758807350252-17
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: identify_id
+            constraintName: uc_enrollments_identify
+            tableName: enrollments
+      rollback:
+        - dropUniqueConstraint:
+            constraintName: uc_enrollments_identify
+            tableName: enrollments
+  - changeSet:
+      id: 1758807350252-18
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: progress_id
+            constraintName: uc_enrollments_progress
+            tableName: enrollments
+      rollback:
+        - dropUniqueConstraint:
+            constraintName: uc_enrollments_progress
+            tableName: enrollments
+  - changeSet:
+      id: 1758807350252-19
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: identify_id
+            constraintName: uc_grades_identify
+            tableName: grades
+      rollback:
+        - dropUniqueConstraint:
+            constraintName: uc_grades_identify
+            tableName: grades
+  - changeSet:
+      id: 1758807350252-20
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: identify_id
+            constraintName: uc_lessons_identify
+            tableName: lessons
+      rollback:
+        - dropUniqueConstraint:
+            constraintName: uc_lessons_identify
+            tableName: lessons
+  - changeSet:
+      id: 1758807350252-21
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: identify_id
+            constraintName: uc_progress_identify
+            tableName: progress
+      rollback:
+        - dropUniqueConstraint:
+            constraintName: uc_progress_identify
+            tableName: progress
+  - changeSet:
+      id: 1758807350252-22
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: identify_id
+            constraintName: uc_question_identify
+            tableName: question
+      rollback:
+        - dropUniqueConstraint:
+            constraintName: uc_question_identify
+            tableName: question
+  - changeSet:
+      id: 1758807350252-23
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: identify_id
+            constraintName: uc_quizzes_identify
+            tableName: quizzes
+      rollback:
+        - dropUniqueConstraint:
+            constraintName: uc_quizzes_identify
+            tableName: quizzes
+  - changeSet:
+      id: 1758807350252-24
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: identify_id
+            constraintName: uc_students_identify
+            tableName: students
+      rollback:
+        - dropUniqueConstraint:
+            constraintName: uc_students_identify
+            tableName: students
+  - changeSet:
+      id: 1758807350252-25
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: question_id
+            baseTableName: answer
+            constraintName: FK_ANSWER_ON_QUESTION
+            referencedColumnNames: question_id
+            referencedTableName: question
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: answer
+            constraintName: FK_ANSWER_ON_QUESTION
+  - changeSet:
+      id: 1758807350252-26
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: student_id
+            baseTableName: answer
+            constraintName: FK_ANSWER_ON_STUDENT
+            referencedColumnNames: student_id
+            referencedTableName: students
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: answer
+            constraintName: FK_ANSWER_ON_STUDENT
+  - changeSet:
+      id: 1758807350252-27
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: course_id
+            baseTableName: enrollments
+            constraintName: FK_ENROLLMENTS_ON_COURSE
+            referencedColumnNames: course_id
+            referencedTableName: courses
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: enrollments
+            constraintName: FK_ENROLLMENTS_ON_COURSE
+  - changeSet:
+      id: 1758807350252-28
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: grade_id
+            baseTableName: enrollments
+            constraintName: FK_ENROLLMENTS_ON_GRADE
+            referencedColumnNames: grade_id
+            referencedTableName: grades
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: enrollments
+            constraintName: FK_ENROLLMENTS_ON_GRADE
+  - changeSet:
+      id: 1758807350252-29
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: progress_id
+            baseTableName: enrollments
+            constraintName: FK_ENROLLMENTS_ON_PROGRESS
+            referencedColumnNames: progress_id
+            referencedTableName: progress
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: enrollments
+            constraintName: FK_ENROLLMENTS_ON_PROGRESS
+  - changeSet:
+      id: 1758807350252-30
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: student_id
+            baseTableName: enrollments
+            constraintName: FK_ENROLLMENTS_ON_STUDENT
+            referencedColumnNames: student_id
+            referencedTableName: students
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: enrollments
+            constraintName: FK_ENROLLMENTS_ON_STUDENT
+  - changeSet:
+      id: 1758807350252-31
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: course_id
+            baseTableName: lessons
+            constraintName: FK_LESSONS_ON_COURSE
+            referencedColumnNames: course_id
+            referencedTableName: courses
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: lessons
+            constraintName: FK_LESSONS_ON_COURSE
+  - changeSet:
+      id: 1758807350252-32
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: quiz_id
+            baseTableName: question
+            constraintName: FK_QUESTION_ON_QUIZ
+            referencedColumnNames: quiz_id
+            referencedTableName: quizzes
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: question
+            constraintName: FK_QUESTION_ON_QUIZ
+  - changeSet:
+      id: 1758807350252-33
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: lesson_id
+            baseTableName: quizzes
+            constraintName: FK_QUIZZES_ON_LESSON
+            referencedColumnNames: lesson_id
+            referencedTableName: lessons
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: quizzes
+            constraintName: FK_QUIZZES_ON_LESSON
+  - changeSet:
+      id: 1758807350252-34
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: answer_id
+            baseTableName: ma_answers
+            constraintName: fk_ma_answers_on_multiple_choice_answer
+            referencedColumnNames: answer_id
+            referencedTableName: answer
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: ma_answers
+            constraintName: fk_ma_answers_on_multiple_choice_answer
+  - changeSet:
+      id: 1758807350252-35
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: question_id
+            baseTableName: mc_correct_indexes
+            constraintName: fk_mc_correct_indexes_on_multiple_choice_question
+            referencedColumnNames: question_id
+            referencedTableName: question
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: mc_correct_indexes
+            constraintName: fk_mc_correct_indexes_on_multiple_choice_question
+  - changeSet:
+      id: 1758807350252-36
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: question_id
+            baseTableName: mc_options
+            constraintName: fk_mc_options_on_multiple_choice_question
+            referencedColumnNames: question_id
+            referencedTableName: question
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: mc_options
+            constraintName: fk_mc_options_on_multiple_choice_question
+  - changeSet:
+      id: 1758807350252-37
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: question_id
+            baseTableName: oc_options
+            constraintName: fk_oc_options_on_one_choice_question
+            referencedColumnNames: question_id
+            referencedTableName: question
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: oc_options
+            constraintName: fk_oc_options_on_one_choice_question

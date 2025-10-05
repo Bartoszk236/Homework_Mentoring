@@ -1,0 +1,290 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1758216427488-1
+      author: bartoszkocylo (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: authorsPK
+                  name: author_id
+                  type: BIGINT
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+            tableName: authors
+  - changeSet:
+      id: 1758216427488-2
+      author: bartoszkocylo (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: book_authorPK
+                  name: book_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: book_authorPK
+                  name: author_id
+                  type: BIGINT
+            tableName: book_author
+  - changeSet:
+      id: 1758216427488-3
+      author: bartoszkocylo (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: booksPK
+                  name: book_id
+                  type: BIGINT
+              - column:
+                  name: identify_uuid
+                  type: VARCHAR(255)
+              - column:
+                  name: is_rented
+                  type: BIT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: isbn
+                  type: VARCHAR(255)
+              - column:
+                  name: release_date
+                  type: date
+              - column:
+                  constraints:
+                    nullable: false
+                  name: title
+                  type: VARCHAR(255)
+              - column:
+                  name: category_id
+                  type: BIGINT
+              - column:
+                  name: publisher_id
+                  type: BIGINT
+            tableName: books
+  - changeSet:
+      id: 1758216427488-4
+      author: bartoszkocylo (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: borrow_recordsPK
+                  name: borrow_record_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: borrow_date
+                  type: date
+              - column:
+                  name: identify_uuid
+                  type: VARCHAR(255)
+              - column:
+                  name: return_date
+                  type: date
+              - column:
+                  name: book_id
+                  type: BIGINT
+              - column:
+                  name: student_id
+                  type: BIGINT
+            tableName: borrow_records
+  - changeSet:
+      id: 1758216427488-5
+      author: bartoszkocylo (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: categoriesPK
+                  name: category_id
+                  type: BIGINT
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+            tableName: categories
+  - changeSet:
+      id: 1758216427488-6
+      author: bartoszkocylo (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: publishersPK
+                  name: publisher_id
+                  type: BIGINT
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+            tableName: publishers
+  - changeSet:
+      id: 1758216427488-7
+      author: bartoszkocylo (generated)
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: studentsPK
+                  name: student_id
+                  type: BIGINT
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+            tableName: students
+  - changeSet:
+      id: 1758216427488-8
+      author: bartoszkocylo (generated)
+      changes:
+        - addUniqueConstraint:
+            columnNames: identify_uuid
+            constraintName: UC_BOOKSIDENTIFY_UUID_COL
+            tableName: books
+  - changeSet:
+      id: 1758216427488-9
+      author: bartoszkocylo (generated)
+      changes:
+        - addUniqueConstraint:
+            columnNames: isbn
+            constraintName: UC_BOOKSISBN_COL
+            tableName: books
+  - changeSet:
+      id: 1758216427488-10
+      author: bartoszkocylo (generated)
+      changes:
+        - addUniqueConstraint:
+            columnNames: identify_uuid
+            constraintName: UC_BORROW_RECORDSIDENTIFY_UUID_COL
+            tableName: borrow_records
+  - changeSet:
+      id: 1758216427488-11
+      author: bartoszkocylo (generated)
+      changes:
+        - createIndex:
+            associatedWith: ''
+            columns:
+              - column:
+                  name: name
+            indexName: idx_name
+            tableName: authors
+  - changeSet:
+      id: 1758216427488-12
+      author: bartoszkocylo (generated)
+      changes:
+        - createIndex:
+            associatedWith: ''
+            columns:
+              - column:
+                  name: title
+            indexName: idx_title
+            tableName: books
+  - changeSet:
+      id: 1758216427488-13
+      author: bartoszkocylo (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: book_id
+            baseTableName: book_author
+            constraintName: FK91ierknt446aaqnjl4uxjyls3
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: book_id
+            referencedTableName: books
+            validate: true
+  - changeSet:
+      id: 1758216427488-14
+      author: bartoszkocylo (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: book_id
+            baseTableName: borrow_records
+            constraintName: FK9ep13xg9kn8vo3w0ntvd08tco
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: book_id
+            referencedTableName: books
+            validate: true
+  - changeSet:
+      id: 1758216427488-15
+      author: bartoszkocylo (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: publisher_id
+            baseTableName: books
+            constraintName: FKayy5edfrqnegqj3882nce6qo8
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: publisher_id
+            referencedTableName: publishers
+            validate: true
+  - changeSet:
+      id: 1758216427488-16
+      author: bartoszkocylo (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: student_id
+            baseTableName: borrow_records
+            constraintName: FKb7jr4fqq1gw81357ssskimhcx
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: student_id
+            referencedTableName: students
+            validate: true
+  - changeSet:
+      id: 1758216427488-17
+      author: bartoszkocylo (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: category_id
+            baseTableName: books
+            constraintName: FKleqa3hhc0uhfvurq6mil47xk0
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: category_id
+            referencedTableName: categories
+            validate: true
+  - changeSet:
+      id: 1758216427488-18
+      author: bartoszkocylo (generated)
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: author_id
+            baseTableName: book_author
+            constraintName: FKro54jqpth9cqm1899dnuu9lqg
+            deferrable: false
+            initiallyDeferred: false
+            referencedColumnNames: author_id
+            referencedTableName: authors
+            validate: true

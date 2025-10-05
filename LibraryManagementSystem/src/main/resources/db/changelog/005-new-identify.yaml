@@ -1,0 +1,73 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1758643882554-3
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: identify_uuid
+                  type: VARCHAR(255)
+            tableName: categories
+  - changeSet:
+      id: 1758643882554-4
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: identify_uuid
+                  type: VARCHAR(255)
+            tableName: students
+  - changeSet:
+      id: 1758643882554-5
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: pages_number
+                  type: INT
+            tableName: books
+  - changeSet:
+      id: 1758643882554-6
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: book_id, author_id
+            constraintName: uc_94021926cdc03552583e4a6ad
+            tableName: book_author
+  - changeSet:
+      id: 1758643882554-7
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: identify_uuid
+            constraintName: uc_categories_identify_uuid
+            tableName: categories
+  - changeSet:
+      id: 1758643882554-8
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: identify_uuid
+            constraintName: uc_students_identify_uuid
+            tableName: students
+  - changeSet:
+      id: 1758643882554-2
+      author: bartoszkocylo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createIndex:
+            columns:
+              - column:
+                  name: isbn
+            indexName: idx_isbn
+            tableName: books
+            unique: false

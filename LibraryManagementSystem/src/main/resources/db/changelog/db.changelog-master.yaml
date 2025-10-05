@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/001-initial.yaml
+  - include:
+      file: db/changelog/002-new-column-in-book.yaml
+  - include:
+      file: db/changelog/003-new-student-field.yaml
+  - include:
+      file: db/changelog/004-audit-fields.yaml
+  - include:
+      file: db/changelog/005-new-identify.yaml
